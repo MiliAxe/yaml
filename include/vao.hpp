@@ -10,16 +10,16 @@
 #include <glad/glad.h>
 #include <globals.hpp>
 
-class VAO
-{
+class VAO {
 private:
-    GLuint id_;
+  GLuint id_;
 
 public:
-    VAO();
+  VAO();
 
-    void bind();
-    static void unbind();
-    void deleteArray();
-    void linkVBO(const VBO& vbo, uint8 slot, uint8 n_components, GLenum type, uint8 stride, uint8 offset);
+  void bind();
+  static void unbind();
+  void deleteArray();
+  void linkVBO(const VBO &vbo, uint8 slot, uint8 n_components, GLenum type,
+               uint8 stride, uint8 offset);
 };

@@ -1,4 +1,5 @@
 #include "vao.hpp"
+#include "vbo.hpp"
 
 VAO::VAO()
 {
