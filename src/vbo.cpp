@@ -6,6 +6,8 @@ void VBO::bind() { glBindBuffer(GL_ARRAY_BUFFER, id_); }
 
 void VBO::unbind() { glBindBuffer(GL_ARRAY_BUFFER, 0); }
 
+void VBO::deleteBuffer() { glDeleteBuffers(1, &id_); }
+
 void VBO::setData(const std::vector<Vertex> &data) {
   bind();
   glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(Vertex), data.data(),

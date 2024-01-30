@@ -18,4 +18,5 @@ public:
   void bind();
   static void unbind();
   void setData(const std::vector<Vertex> &data);
+  void deleteBuffer();
 };
