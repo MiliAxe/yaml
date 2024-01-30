@@ -1,4 +1,4 @@
-/**
+/*
  *
  * @file vao.hpp
  *
@@ -7,7 +7,7 @@
  */
 
 #pragma once
-#include <glad/glad.h>
+#include <vbo.hpp>
 #include <globals.hpp>
 
 class VAO {
