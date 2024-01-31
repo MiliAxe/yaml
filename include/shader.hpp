@@ -9,29 +9,29 @@
 
 #include "globals.hpp"
 
-class Shader {
-
-  friend class ShaderProgram;
-
-private:
+class BaseShader {
+protected:
   GLuint id_;
-  GLenum type_;
-  std::string type_name_;
-  std::string file_path_;
 
-  [[nodiscard("return value unused")]] static auto
+  [[nodiscard("value not stored")]] static auto
   readShaderSource_(const char *file_path) noexcept -> char *;
-
-  void create_(GLenum type, const char *file_path) const noexcept;
-  auto checkErrors_() const noexcept -> bool;
+  void compile_(const char *file_path) noexcept;
 
 public:
-  Shader(GLenum type, const char *file_path);
-  Shader(const Shader &) = delete;
-  auto operator=(const Shader &) -> Shader & = delete;
-  ~Shader();
+  BaseShader(const char *file_path, GLenum type);
+  BaseShader(const BaseShader &) = delete;
+  auto operator=(const BaseShader &) -> BaseShader & = delete;
+  virtual ~BaseShader();
 
-  void deleteShader() const noexcept;
-  [[nodiscard("variable unused.")]] auto getId() const noexcept
-      -> const GLuint &;
+  auto getId() const noexcept -> const GLuint &;
+};
+
+class VertexShader : public BaseShader {
+public:
+  VertexShader(const char *file_path);
+};
+
+class FragmentShader : public BaseShader {
+public:
+  FragmentShader(const char *file_path);
 };
