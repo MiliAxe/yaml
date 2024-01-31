@@ -7,8 +7,8 @@
  */
 
 #pragma once
-#include <vbo.hpp>
 #include <globals.hpp>
+#include <vbo.hpp>
 
 class VAO {
 private:
@@ -20,6 +20,6 @@ public:
   void bind();
   static void unbind();
   void deleteArray();
-  void linkVBO(const VBO &vbo, uint8 slot, uint8 n_components, GLenum type,
+  void linkVBO(VBO &vbo, uint8 slot, uint8 n_components, GLenum type,
                uint8 stride, uint8 offset);
 };
