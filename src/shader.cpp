@@ -36,9 +36,16 @@ BaseShader::BaseShader(const char *file_path, GLenum type) {
 
 void BaseShader::compile_(const char *file_path) noexcept {
   const char *shader_source = readShaderSource_(file_path);
+
   glShaderSource(id_, 1, &shader_source, nullptr);
   glCompileShader(id_);
 
+  checkErrors_(file_path);
+
+  delete[] shader_source;
+}
+
+void BaseShader::checkErrors_(const char *file_path) const noexcept {
   GLint success;
   glGetShaderiv(id_, GL_COMPILE_STATUS, &success);
   if (!success) {

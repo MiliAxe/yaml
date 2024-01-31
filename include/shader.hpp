@@ -16,6 +16,7 @@ protected:
   [[nodiscard("value not stored")]] static auto
   readShaderSource_(const char *file_path) noexcept -> char *;
   void compile_(const char *file_path) noexcept;
+  void checkErrors_(const char *file_path) const noexcept;
 
 public:
   BaseShader(const char *file_path, GLenum type);
