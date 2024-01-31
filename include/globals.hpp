@@ -1,3 +1,9 @@
+/*
+ *  @file globals.hpp
+ *
+ *  @brief globals tools used in development workflow
+ */
+
 #pragma once
 
 #include <cstdint>
