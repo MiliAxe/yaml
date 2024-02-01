@@ -7,24 +7,17 @@
 
 auto BaseShader::readShaderSource_(const char *file_path) noexcept -> char * {
   char *buffer;
+  uint64 buffer_length;
 
   std::ifstream file(file_path, std::ios::binary);
-  std::string buffer_string;
 
-  if (!file.is_open()) {
-    ERROR_LOG("could not open shader file.");
-    return nullptr;
-  }
+  file.seekg(0, std::ios::end);
+  buffer_length = file.tellg();
+  file.seekg(0, std::ios::beg);
 
-  buffer_string = std::string(std::istreambuf_iterator<char>(file),
-                              std::istreambuf_iterator<char>());
+  buffer = new char[buffer_length];
 
-  file.close();
-
-  buffer = new char[buffer_string.size()];
-  for (uint64 i = 0; i < buffer_string.size(); ++i) {
-    buffer[i] = buffer_string[i];
-  }
+  file.read(buffer, buffer_length);
 
   return buffer;
 }
