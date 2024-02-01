@@ -5,11 +5,15 @@
 #include <ios>
 #include <sys/types.h>
 
-auto BaseShader::readShaderSource_(const char *file_path) noexcept -> char * {
+auto BaseShader::readShaderSource_(const char *file_path) -> char * {
   char *buffer;
   uint64 buffer_length;
-
   std::ifstream file(file_path, std::ios::binary);
+
+  if (!file.is_open()) {
+    ERROR_LOG(std::format("file \"{}\" could not be oppened.", file_path));
+    throw RUNTIME_ERROR;
+  }
 
   file.seekg(0, std::ios::end);
   buffer_length = file.tellg();
@@ -18,6 +22,7 @@ auto BaseShader::readShaderSource_(const char *file_path) noexcept -> char * {
   buffer = new char[buffer_length];
 
   file.read(buffer, buffer_length);
+  file.close();
 
   return buffer;
 }

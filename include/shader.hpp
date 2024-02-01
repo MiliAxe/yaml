@@ -14,7 +14,7 @@ protected:
   GLuint id_;
 
   [[nodiscard("value not stored")]] static auto
-  readShaderSource_(const char *file_path) noexcept -> char *;
+  readShaderSource_(const char *file_path) -> char *;
   void compile_(const char *file_path) noexcept;
   void checkErrors_(const char *file_path) const noexcept;
 

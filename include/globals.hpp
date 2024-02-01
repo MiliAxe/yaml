@@ -7,9 +7,11 @@
 #pragma once
 
 #include <cstdint>
+#include <exception>
 #include <filesystem>
 #include <format>
 #include <glad/glad.h>
+#include <stdexcept>
 #include <string_view>
 
 #define __FILENAME__ std::filesystem::path(__FILE__).filename().string()
@@ -41,6 +43,8 @@ _loader_error_log(std::string_view msg, std::string_view file, int32 line) {
                 .c_str());
 }
 #define ERROR_LOG(m) _loader_error_log(m, __FILENAME__, __LINE__)
+
+#define RUNTIME_ERROR std::runtime_error("Error detected, check log!")
 
 #define IS_VERBOSE 1
 
