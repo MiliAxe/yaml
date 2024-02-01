@@ -43,13 +43,15 @@ void BaseShader::compile_(const char *file_path) noexcept {
   delete[] shader_source;
 }
 
-void BaseShader::checkErrors_(const char *file_path) const noexcept {
+void BaseShader::checkErrors_(const char *file_path) const {
   GLint success;
   glGetShaderiv(id_, GL_COMPILE_STATUS, &success);
   if (!success) {
     GLchar info_log[512];
     glGetShaderInfoLog(id_, sizeof(info_log), nullptr, info_log);
     ERROR_LOG(std::format("failed compiling shader \"{}\".", file_path));
+
+    throw RUNTIME_ERROR;
   }
 }
 
