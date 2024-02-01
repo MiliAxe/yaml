@@ -9,7 +9,7 @@ void VAO::unbind() noexcept { glBindVertexArray(0); }
 
 void VAO::deleteArray() const noexcept { glDeleteVertexArrays(1, &id_); }
 
-void VAO::linkVBO(VBO &vbo, uint8 slot, uint8 n_components, GLenum type,
+void VAO::linkVBO(const VBO &vbo, uint8 slot, uint8 n_components, GLenum type,
                   uint8 stride, uint8 offset) const noexcept {
   bind();
   vbo.bind();
