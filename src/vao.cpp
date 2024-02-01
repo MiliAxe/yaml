@@ -1,16 +1,16 @@
 #include "vao.hpp"
 #include "vbo.hpp"
 
-VAO::VAO() { glGenVertexArrays(1, &id_); }
+VAO::VAO() noexcept { glGenVertexArrays(1, &id_); }
 
-void VAO::bind() { glBindVertexArray(id_); }
+void VAO::bind() const noexcept { glBindVertexArray(id_); }
 
-void VAO::unbind() { glBindVertexArray(0); }
+void VAO::unbind() noexcept { glBindVertexArray(0); }
 
-void VAO::deleteArray() { glDeleteVertexArrays(1, &id_); }
+void VAO::deleteArray() const noexcept { glDeleteVertexArrays(1, &id_); }
 
 void VAO::linkVBO(VBO &vbo, uint8 slot, uint8 n_components, GLenum type,
-                  uint8 stride, uint8 offset) {
+                  uint8 stride, uint8 offset) const noexcept {
   bind();
   vbo.bind();
 

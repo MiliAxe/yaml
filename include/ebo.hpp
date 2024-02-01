@@ -15,10 +15,10 @@ private:
   GLuint id_;
 
 public:
-  EBO();
+  EBO() noexcept;
 
-  void bind();
-  static void unbind();
-  void deleteBuffer();
-  void setData(const std::vector<GLuint> &indices);
+  void bind() const noexcept;
+  static void unbind() noexcept;
+  void deleteBuffer() const noexcept;
+  void setData(const std::vector<GLuint> &indices) const noexcept;
 };
