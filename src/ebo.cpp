@@ -1,4 +1,5 @@
-#include <ebo.hpp>
+#include "ebo.hpp"
+
 #include <vector>
 
 EBO::EBO() noexcept { glGenBuffers(1, &id_); }

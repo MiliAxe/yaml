@@ -1,4 +1,4 @@
-#include <vbo.hpp>
+#include "vbo.hpp"
 
 VBO::VBO() noexcept { glGenBuffers(1, &id_); }
 

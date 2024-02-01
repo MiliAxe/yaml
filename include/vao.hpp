@@ -7,8 +7,9 @@
  */
 
 #pragma once
-#include <globals.hpp>
-#include <vbo.hpp>
+
+#include "globals.hpp"
+#include "vbo.hpp"
 
 class VAO {
 private:

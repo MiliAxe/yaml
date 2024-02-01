@@ -6,7 +6,9 @@
  */
 
 #pragma once
-#include <globals.hpp>
+
+#include "globals.hpp"
+
 #include <vector>
 
 class VBO {
