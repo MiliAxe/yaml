@@ -57,6 +57,8 @@ void BaseShader::checkErrors_(const char *file_path) const {
 
 BaseShader::~BaseShader() { glDeleteShader(id_); }
 
+auto BaseShader::getId() const noexcept -> const GLuint & { return id_; }
+
 VertexShader::VertexShader(const char *file_path)
     : BaseShader(file_path, GL_VERTEX_SHADER) {}
 

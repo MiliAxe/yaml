@@ -24,6 +24,12 @@ ShaderProgram::ShaderProgram(const char *vertex_path,
   checkErrors_();
 }
 
+void ShaderProgram::deActive() noexcept { glUseProgram(0); }
+
+void ShaderProgram::activate() const noexcept { glUseProgram(id_); }
+
+void ShaderProgram::deleteProgram() const noexcept { glDeleteProgram(id_); }
+
 void ShaderProgram::setBool(const char *name, bool value) const noexcept {
   glUniform1i(glGetUniformLocation(id_, name), value);
 }
