@@ -8,6 +8,7 @@
 #pragma once
 
 #include "globals.hpp"
+#include "vertex.hpp"
 
 #include <vector>
 
