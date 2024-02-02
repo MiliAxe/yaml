@@ -5,9 +5,7 @@
 #include <ios>
 #include <sys/types.h>
 
-auto BaseShader::readShaderSource_(const char *file_path) -> char * {
-  char *buffer;
-  uint64 buffer_length;
+auto BaseShader::readShaderSource_(const char *file_path) -> std::string {
   std::ifstream file(file_path, std::ios::binary);
 
   if (!file.is_open()) {
@@ -15,32 +13,27 @@ auto BaseShader::readShaderSource_(const char *file_path) -> char * {
     throw RUNTIME_ERROR;
   }
 
-  file.seekg(0, std::ios::end);
-  buffer_length = file.tellg();
-  file.seekg(0, std::ios::beg);
+  std::string file_string((std::istreambuf_iterator<char>(file)),
+                          std::istreambuf_iterator<char>());
 
-  buffer = new char[buffer_length];
-
-  file.read(buffer, buffer_length);
   file.close();
 
-  return buffer;
+  return file_string;
 }
 
-BaseShader::BaseShader(const char *file_path, GLenum type) {
+BaseShader::BaseShader(const char *file_path, GLenum type) noexcept {
   id_ = glCreateShader(type);
   compile_(file_path);
 }
 
-void BaseShader::compile_(const char *file_path) noexcept {
-  const char *shader_source = readShaderSource_(file_path);
+void BaseShader::compile_(const char *file_path) const noexcept {
+  std::string shader_string = readShaderSource_(file_path);
+  const char *shader_source_buffer = shader_string.c_str();
 
-  glShaderSource(id_, 1, &shader_source, nullptr);
+  glShaderSource(id_, 1, &shader_source_buffer, nullptr);
   glCompileShader(id_);
 
   checkErrors_(file_path);
-
-  delete[] shader_source;
 }
 
 void BaseShader::checkErrors_(const char *file_path) const {
@@ -55,12 +48,12 @@ void BaseShader::checkErrors_(const char *file_path) const {
   }
 }
 
-BaseShader::~BaseShader() { glDeleteShader(id_); }
+BaseShader::~BaseShader() noexcept { glDeleteShader(id_); }
 
 auto BaseShader::getId() const noexcept -> const GLuint & { return id_; }
 
-VertexShader::VertexShader(const char *file_path)
+VertexShader::VertexShader(const char *file_path) noexcept
     : BaseShader(file_path, GL_VERTEX_SHADER) {}
 
-FragmentShader::FragmentShader(const char *file_path)
+FragmentShader::FragmentShader(const char *file_path) noexcept
     : BaseShader(file_path, GL_FRAGMENT_SHADER) {}

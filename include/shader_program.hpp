@@ -19,7 +19,7 @@ private:
   void checkErrors_() const noexcept;
 
 public:
-  ShaderProgram(const char *vertex_path, const char *fragment_path);
+  ShaderProgram(const char *vertex_path, const char *fragment_path) noexcept;
 
   static void deActive() noexcept;
   void activate() const noexcept;

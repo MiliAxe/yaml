@@ -12,7 +12,7 @@ void ShaderProgram::checkErrors_() const noexcept {
 }
 
 ShaderProgram::ShaderProgram(const char *vertex_path,
-                             const char *fragment_path) {
+                             const char *fragment_path) noexcept {
   VertexShader vertex_shader(vertex_path);
   FragmentShader fragment_shader(fragment_path);
 
