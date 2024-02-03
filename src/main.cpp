@@ -9,6 +9,9 @@
 #include <GLFW/glfw3.h>
 #include <cstddef>
 #include <vector>
+#include <stb_image.h>
+#include <iostream>
+#include <random>
 
 std::vector<Vertex> vertices;
 
@@ -18,6 +21,7 @@ std::vector<unsigned int> indices = {
 };
 
 int main() {
+    stbi_set_flip_vertically_on_load(true);
   GLFWwindow *window = fn::initGLFWandGLAD();
 
   ShaderProgram basic_shader("assets/shaders/basic_shaders/vert.glsl",
@@ -58,14 +62,32 @@ int main() {
 
   Texture2D text0;
   text0.loadFromFile("assets/textures/brandon.png");
+
+  Texture2D text1;
+  text1.loadFromFile("assets/textures/brandon2.jpg");
   
+  std::default_random_engine generator;
+  std::uniform_real_distribution<float> distribution(0.0, 1.0);
+
+  // Enable blending
+  glEnable(GL_BLEND);
+  // Set the blend function
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
   glClearColor(0, 0, 0, 0);
   while (!glfwWindowShouldClose(window)) {
     glClear(GL_COLOR_BUFFER_BIT);
 
+    float randomValue = distribution(generator);
+    std::cout << randomValue * 100 << std::endl;
+    basic_shader.setFloat("time", randomValue * 100);
+
     basic_shader.activate();
-    text0.bind(0);
+    text0.activateSlot(0);
+    text0.bind();
+    text1.bind(1);
+    basic_shader.setInt("tex0", text0.getCurrentSlot());
+    basic_shader.setInt("tex1", text1.getCurrentSlot());
     vao.bind();
     ebo.bind();
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
