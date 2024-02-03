@@ -23,7 +23,8 @@ target_sources(
           src/vbo.cpp
           src/ebo.cpp
           src/vao.cpp
-          src/utl.cpp)
+          src/utl.cpp
+          src/texture2d.cpp)
 target_include_directories(model_loader
                            PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include/")
 target_link_libraries(model_loader PRIVATE glfw glad stb_image)
