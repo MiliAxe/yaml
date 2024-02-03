@@ -18,7 +18,7 @@ auto Texture2D::getImageBinary(const char *image_path, int *width, int *height,
 }
 
 Texture2D::Texture2D() {
-  glGenTextures(kTexture_type, &id_);
+  glGenTextures(1, &id_);
   initTexture();
 }
 
@@ -55,10 +55,20 @@ void Texture2D::deleteTexture() const noexcept { glDeleteTextures(1, &id_); }
 
 void Texture2D::loadFromFile(const char *image_path) const {
   int width, height, n_channels;
-  GLubyte *data = getImageBinary(image_path, &width, &height, &n_channels);
+  GLubyte *data =
+      getImageBinary(image_path, &width, &height, &n_channels);
+  GLenum image_format;
+  switch (n_channels) {
+  case 3:
+    image_format = GL_RGB;
+    break;
+  case 4:
+    image_format = GL_RGBA;
+    break;
+  }
   bind();
-  glTexImage2D(kTexture_type, 0, GL_RGB, width, height, 0, GL_RGB,
-               GL_UNSIGNED_INT, data);
+  glTexImage2D(kTexture_type, 0, GL_RGBA, width, height, 0, image_format,
+               GL_UNSIGNED_BYTE, data);
   generateMipmap();
   unbind();
 

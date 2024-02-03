@@ -57,7 +57,7 @@ int main() {
   ebo.setData(indices);
 
   Texture2D text0;
-  // text0.loadFromFile("assets/textures/brandon.png");
+  text0.loadFromFile("assets/textures/brandon.png");
   
 
   glClearColor(0, 0, 0, 0);
@@ -65,7 +65,7 @@ int main() {
     glClear(GL_COLOR_BUFFER_BIT);
 
     basic_shader.activate();
-    // text0.bind(0);
+    text0.bind(0);
     vao.bind();
     ebo.bind();
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
