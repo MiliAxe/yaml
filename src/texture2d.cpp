@@ -24,6 +24,7 @@ Texture2D::Texture2D() {
 
 void Texture2D::activateSlot(uint8 slot) noexcept {
   glActiveTexture(GL_TEXTURE0 + slot);
+  current_slot_ = slot;
 }
 
 void Texture2D::initTexture(GLenum wrap_s, GLenum wrap_t, GLenum min_filter,
@@ -36,16 +37,22 @@ void Texture2D::initTexture(GLenum wrap_s, GLenum wrap_t, GLenum min_filter,
   unbind();
 }
 
-void Texture2D::unbind() noexcept { glBindTexture(kTexture_type, 0); }
+void Texture2D::unbind() noexcept {
+  is_bound = false;
+  glBindTexture(kTexture_type, 0);
+}
 
-void Texture2D::bind() const noexcept { glBindTexture(kTexture_type, id_); }
+void Texture2D::bind() noexcept {
+  is_bound = true;
+  glBindTexture(kTexture_type, id_);
+}
 
-void Texture2D::bind(uint8 slot) const noexcept {
+void Texture2D::bind(uint8 slot) noexcept {
   activateSlot(slot);
   bind();
 }
 
-void Texture2D::generateMipmap() const noexcept {
+void Texture2D::generateMipmap() noexcept {
   bind();
   glGenerateMipmap(kTexture_type);
   unbind();
@@ -53,7 +60,7 @@ void Texture2D::generateMipmap() const noexcept {
 
 void Texture2D::deleteTexture() const noexcept { glDeleteTextures(1, &id_); }
 
-void Texture2D::loadFromFile(const char *image_path) const {
+void Texture2D::loadFromFile(const char *image_path) {
   int width, height, n_channels;
   GLubyte *data =
       getImageBinary(image_path, &width, &height, &n_channels);
@@ -76,3 +83,11 @@ void Texture2D::loadFromFile(const char *image_path) const {
 }
 
 auto Texture2D::getID() const noexcept -> const GLuint & { return id_; }
+
+auto Texture2D::getCurrentSlot() const -> const uint8 & {
+  if (!is_bound) {
+    ERROR_LOG("Trying to get the slot of an unbound texture");
+    throw RUNTIME_ERROR;
+  }
+  return current_slot_;
+}
