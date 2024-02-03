@@ -14,6 +14,7 @@ class Texture2D {
 private:
   GLuint id_;
   uint8 current_slot_ = 0;
+  bool is_bound = false;
 
   [[nodiscard("Image data unhandled")]] static auto
   getImageBinary(const char *image_path, int *width, int *height, int *n_channels) -> GLubyte *;
@@ -26,13 +27,13 @@ private:
 public:
   Texture2D();
 
-  static void activateSlot(uint8 slot) noexcept;
-  static void unbind() noexcept;
-  
-  void generateMipmap() const noexcept;
-  void bind() const noexcept;
+  void unbind() noexcept;
+  void activateSlot(uint8 slot) noexcept;
+  void generateMipmap() noexcept;
+  void bind() noexcept;
   void bind(uint8 slot) noexcept;
   void deleteTexture() const noexcept;
-  void loadFromFile(const char *image_path) const;
+  void loadFromFile(const char *image_path);
   auto getID() const noexcept -> const GLuint &;
+  auto getCurrentSlot() const -> const uint8 &;
 };
