@@ -40,8 +40,9 @@ void Texture2D::unbind() noexcept { glBindTexture(kTexture_type, 0); }
 
 void Texture2D::bind() const noexcept { glBindTexture(kTexture_type, id_); }
 
-void Texture2D::bind(uint8 slot) const noexcept {
+void Texture2D::bind(uint8 slot) noexcept {
   activateSlot(slot);
+  current_slot_ = slot;
   bind();
 }
 

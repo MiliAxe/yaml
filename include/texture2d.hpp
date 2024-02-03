@@ -31,7 +31,7 @@ public:
   
   void generateMipmap() const noexcept;
   void bind() const noexcept;
-  void bind(uint8 slot) const noexcept;
+  void bind(uint8 slot) noexcept;
   void deleteTexture() const noexcept;
   void loadFromFile(const char *image_path) const;
   auto getID() const noexcept -> const GLuint &;
