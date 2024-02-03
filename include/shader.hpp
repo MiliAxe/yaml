@@ -14,6 +14,7 @@ class BaseShader {
 protected:
   GLuint id_;
 
+private:
   [[nodiscard("value not stored")]] static auto
   readShaderSource_(const char *file_path) -> std::string;
   void compile_(const char *file_path) const noexcept;
