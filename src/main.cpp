@@ -14,52 +14,36 @@
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <ios>
 #include <stb_image.h>
 #include <vector>
 
+
+
 float vertices[] = {
-    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-     0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+    -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 0.5f,  -0.5f, -0.5f, 1.0f, 0.0f,
+    0.5f,  0.5f,  -0.5f, 1.0f, 1.0f, 0.5f,  0.5f,  -0.5f, 1.0f, 1.0f,
+    -0.5f, 0.5f,  -0.5f, 0.0f, 1.0f, -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
 
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+    -0.5f, -0.5f, 0.5f,  0.0f, 0.0f, 0.5f,  -0.5f, 0.5f,  1.0f, 0.0f,
+    0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+    -0.5f, 0.5f,  0.5f,  0.0f, 1.0f, -0.5f, -0.5f, 0.5f,  0.0f, 0.0f,
 
-    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-    -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+    -0.5f, 0.5f,  0.5f,  1.0f, 0.0f, -0.5f, 0.5f,  -0.5f, 1.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+    -0.5f, -0.5f, 0.5f,  0.0f, 0.0f, -0.5f, 0.5f,  0.5f,  1.0f, 0.0f,
 
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+    0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.5f,  0.5f,  -0.5f, 1.0f, 1.0f,
+    0.5f,  -0.5f, -0.5f, 0.0f, 1.0f, 0.5f,  -0.5f, -0.5f, 0.0f, 1.0f,
+    0.5f,  -0.5f, 0.5f,  0.0f, 0.0f, 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
 
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 0.5f,  -0.5f, -0.5f, 1.0f, 1.0f,
+    0.5f,  -0.5f, 0.5f,  1.0f, 0.0f, 0.5f,  -0.5f, 0.5f,  1.0f, 0.0f,
+    -0.5f, -0.5f, 0.5f,  0.0f, 0.0f, -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
 
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
-};
+    -0.5f, 0.5f,  -0.5f, 0.0f, 1.0f, 0.5f,  0.5f,  -0.5f, 1.0f, 1.0f,
+    0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+    -0.5f, 0.5f,  0.5f,  0.0f, 0.0f, -0.5f, 0.5f,  -0.5f, 0.0f, 1.0f};
 
 void initializeCubeVertices(std::vector<Vertex> &VBO_vertices) {
   VBO_vertices.reserve(36);
@@ -92,26 +76,42 @@ void initializeOpenGLParams() {
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
-void initializeTransforms(glm::mat4 &model, glm::mat4 &view, glm::mat4 &projection) {
+void initializeTransforms(glm::mat4 &model, glm::mat4 &view,
+                          glm::mat4 &projection) {
   model = glm::mat4(1.0f);
   view = glm::mat4(1.0f);
   projection = glm::mat4(1.0f);
-  projection = glm::perspective(glm::radians(45.0f), (float)WINDOW_WIDTH/(float)WINDOW_HEIGHT, 0.1f, 100.0f);
+  projection = glm::perspective(glm::radians(45.0f),
+                                (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT,
+                                0.1f, 100.0f);
+  // projection = glm::ortho(-2.0f, 2.0f, 2.1f, -2.0f, -3.0f, 1000.0f);
 }
 
-void updateModelTransform(glm::mat4& model) {
+void updateModelTransform(glm::mat4 &model) {
   model = glm::mat4(1.0f);
-  model = glm::translate(model, glm::vec3(0.0f, 0.0f, glm::sin(glfwGetTime()) - 3.0f));
+  model = glm::translate(model,
+                         glm::vec3(0.0f, 0.0f, glm::sin(glfwGetTime()) - 3.0f));
   model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(1.0f, 2.0f, 1.0f));
 }
 
-void updateShaderTransforms(ShaderProgram& shader, glm::mat4& model, glm::mat4& view, glm::mat4& projection) {
+void updateShaderTransforms(ShaderProgram &shader, glm::mat4 &model,
+                            glm::mat4 &view, glm::mat4 &projection) {
   shader.setMat4("model", model);
   shader.setMat4("view", view);
   shader.setMat4("projection", projection);
 }
 
-void bindTexturesToShader(ShaderProgram& shader, Texture2D& text0, Texture2D& text1) {
+void updateViewTransform(glm::mat4 &view, glm::vec3 cameraPos, glm::vec3 cameraTarget) {
+  glm::vec3 cameraDirection = glm::normalize(cameraPos - cameraTarget);
+  glm::vec3 up(0.0f, 1.0f, 0.0f);
+  glm::vec3 cameraRight = glm::normalize(glm::cross(up, cameraDirection));
+  glm::vec3 cameraUp = glm::cross(cameraDirection, cameraRight);
+
+  view = glm::lookAt(cameraPos, cameraTarget, cameraUp);
+}
+
+void bindTexturesToShader(ShaderProgram &shader, Texture2D &text0,
+                          Texture2D &text1) {
   shader.activate();
   text0.bind(0);
   text1.bind(1);
@@ -120,7 +120,7 @@ void bindTexturesToShader(ShaderProgram& shader, Texture2D& text0, Texture2D& te
   shader.deActive();
 }
 
-void render(GLFWwindow* window, ShaderProgram& shader, VAO& vao) {
+void render(GLFWwindow *window, ShaderProgram &shader, VAO &vao) {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   shader.activate();
   vao.bind();
@@ -152,7 +152,9 @@ int main() {
 
   glClearColor(0, 0, 0, 0);
   while (!glfwWindowShouldClose(window)) {
-    updateModelTransform(model);
+    // updateModelTransform(model);
+    const float radius = 5.0f;
+    updateViewTransform(view, glm::vec3(cameraX, 2.0f, cameraY), glm::vec3(0.0f, 0.0f, 0.0f));
 
     updateShaderTransforms(basic_shader, model, view, projection);
 
