@@ -53,3 +53,4 @@ GLFWwindow *fn::initGLFWandGLAD() {
 
   return window;
 }
+

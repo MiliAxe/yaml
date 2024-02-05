@@ -8,17 +8,33 @@
 #include "vertex.hpp"
 
 #include <GLFW/glfw3.h>
+#include <algorithm>
 #include <cstddef>
 #include <glm/ext.hpp>
 #include <glm/ext/matrix_clip_space.hpp>
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <ios>
 #include <stb_image.h>
 #include <vector>
 
+glm::vec3 camera_position = {0.0f, 0.0f, 0.0f};
+glm::vec3 camera_direction = {0.0f, 0.0f, -1.0f};
+glm::vec3 camera_up = {0.0f, 1.0f, 0.0f};
 
+float current_time;
+float last_time;
+float delta_time;
+
+float fov = 60.0f;
+
+float pitch = 0.0f;
+float yaw = -90.0f;
+
+float last_x = 0.0f;
+float last_y = 0.0f;
+
+bool first_mouse = true;
 
 float vertices[] = {
     -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 0.5f,  -0.5f, -0.5f, 1.0f, 0.0f,
@@ -67,7 +83,7 @@ void initializeCubeBuffers(VAO &vao, VBO &vbo) {
 
 void initializeCubeTextures(Texture2D &text0, Texture2D &text1) {
   text0.loadFromFile("assets/textures/brandon.png");
-  text1.loadFromFile("assets/textures/brandon2.png");
+  text1.loadFromFile("assets/textures/arch.png");
 }
 
 void initializeOpenGLParams() {
@@ -81,10 +97,16 @@ void initializeTransforms(glm::mat4 &model, glm::mat4 &view,
   model = glm::mat4(1.0f);
   view = glm::mat4(1.0f);
   projection = glm::mat4(1.0f);
-  projection = glm::perspective(glm::radians(45.0f),
+  projection = glm::perspective(glm::radians(fov),
                                 (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT,
                                 0.1f, 100.0f);
   // projection = glm::ortho(-2.0f, 2.0f, 2.1f, -2.0f, -3.0f, 1000.0f);
+}
+
+void updateProjectionMatrix(glm::mat4 &projection) {
+  projection = glm::perspective(glm::radians(fov),
+                                (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT,
+                                0.1f, 100.0f);
 }
 
 void updateModelTransform(glm::mat4 &model) {
@@ -101,13 +123,9 @@ void updateShaderTransforms(ShaderProgram &shader, glm::mat4 &model,
   shader.setMat4("projection", projection);
 }
 
-void updateViewTransform(glm::mat4 &view, glm::vec3 cameraPos, glm::vec3 cameraTarget) {
-  glm::vec3 cameraDirection = glm::normalize(cameraPos - cameraTarget);
-  glm::vec3 up(0.0f, 1.0f, 0.0f);
-  glm::vec3 cameraRight = glm::normalize(glm::cross(up, cameraDirection));
-  glm::vec3 cameraUp = glm::cross(cameraDirection, cameraRight);
-
-  view = glm::lookAt(cameraPos, cameraTarget, cameraUp);
+void updateViewTransform(glm::mat4 &view) {
+  view = glm::lookAt(camera_position, camera_position + camera_direction,
+                     camera_up);
 }
 
 void bindTexturesToShader(ShaderProgram &shader, Texture2D &text0,
@@ -129,9 +147,85 @@ void render(GLFWwindow *window, ShaderProgram &shader, VAO &vao) {
   glfwPollEvents();
 }
 
+void processCameraInput(GLFWwindow *window, float delta_time) {
+
+  float tmp_speed = CAMERA_SPEED * delta_time;
+  if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+    camera_position += camera_direction * tmp_speed;
+  }
+
+  if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+    camera_position -= camera_direction * tmp_speed;
+  }
+
+  if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+    camera_position +=
+        glm::normalize(glm::cross(camera_direction, camera_up)) * tmp_speed;
+  }
+
+  if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+    camera_position -=
+        glm::normalize(glm::cross(camera_direction, camera_up)) * tmp_speed;
+  }
+
+  if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+    double cur_x;
+    double cur_y;
+    glfwGetCursorPos(window, &cur_x, &cur_y);
+
+    if (first_mouse) {
+      last_x = (float)cur_x;
+      last_y = (float)cur_y;
+
+      first_mouse = false;
+    }
+
+    float xoffset = cur_x - last_x;
+    float yoffset = last_y - cur_y;
+
+    last_x = cur_x;
+    last_y = cur_y;
+
+    xoffset *= CAMERA_SENSITIVITY;
+    yoffset *= CAMERA_SENSITIVITY;
+
+    yaw += xoffset;
+    pitch += yoffset;
+
+    pitch = std::clamp(pitch, -89.9f, 89.9f);
+
+    glm::vec3 new_camera_direction;
+    new_camera_direction.x =
+        glm::cos(glm::radians(pitch)) * glm::cos(glm::radians(yaw));
+    new_camera_direction.y = glm::sin(glm::radians(pitch));
+    new_camera_direction.z =
+        glm::cos(glm::radians(pitch)) * glm::sin(glm::radians(yaw));
+
+    camera_direction = new_camera_direction;
+
+  } else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) ==
+             GLFW_RELEASE) {
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    first_mouse = true;
+  }
+}
+
+void scroll_callback([[maybe_unused]] GLFWwindow *window,
+                     [[maybe_unused]] double xoffset, double yoffset) {
+  fov -= (float)yoffset;
+  if (fov < 1.0f)
+    fov = 1.0f;
+  if (fov > 150.0f)
+    fov = 150.0f;
+}
+
 int main() {
   stbi_set_flip_vertically_on_load(true);
   GLFWwindow *window = fn::initGLFWandGLAD();
+
+  glfwSetScrollCallback(window, scroll_callback);
 
   ShaderProgram basic_shader("assets/shaders/basic_shaders/vert.glsl",
                              "assets/shaders/basic_shaders/frag.glsl");
@@ -152,9 +246,17 @@ int main() {
 
   glClearColor(0, 0, 0, 0);
   while (!glfwWindowShouldClose(window)) {
-    // updateModelTransform(model);
-    const float radius = 5.0f;
-    updateViewTransform(view, glm::vec3(cameraX, 2.0f, cameraY), glm::vec3(0.0f, 0.0f, 0.0f));
+    current_time = (float)glfwGetTime();
+    delta_time = current_time - last_time;
+    last_time = current_time;
+
+    processCameraInput(window, delta_time);
+
+    updateProjectionMatrix(projection);
+
+    updateModelTransform(model);
+
+    updateViewTransform(view);
 
     updateShaderTransforms(basic_shader, model, view, projection);
 
