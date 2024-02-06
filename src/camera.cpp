@@ -8,6 +8,17 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
 
+auto FreeRoamCamera::getNewDirVec_() const noexcept -> glm::vec3 {
+  glm::vec3 new_direction;
+  new_direction.x =
+      glm::cos(glm::radians(yaw_)) * glm::cos(glm::radians(pitch_));
+  new_direction.y = glm::sin(glm::radians(pitch_));
+  new_direction.z =
+      glm::sin(glm::radians(yaw_)) * glm::cos(glm::radians(pitch_));
+
+  return glm::normalize(new_direction);
+}
+
 void FreeRoamCamera::processMouse_(GLFWwindow *window) noexcept {
   if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -34,18 +45,12 @@ void FreeRoamCamera::processMouse_(GLFWwindow *window) noexcept {
     yaw_ += x_offset;
     pitch_ += y_offset;
 
-    pitch_ = std::clamp(pitch_, -89.999999f, 89.999999f);
+    pitch_ = std::clamp(pitch_, MINIMUM_PITCH_DEGREE, MAXIMUM_PITCH_DEGREE);
 
-    glm::vec3 new_direction;
-    new_direction.x =
-        glm::cos(glm::radians(yaw_)) * glm::cos(glm::radians(pitch_));
-    new_direction.y = glm::sin(glm::radians(pitch_));
-    new_direction.z =
-        glm::sin(glm::radians(yaw_)) * glm::cos(glm::radians(pitch_));
+    direction_ = getNewDirVec_();
 
-    direction_ = glm::normalize(new_direction);
-
-  } else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE) {
+  } else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) ==
+             GLFW_RELEASE) {
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
     first_click_move_ = true;
   }
