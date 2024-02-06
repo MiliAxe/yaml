@@ -54,3 +54,4 @@ public:
   [[nodiscard("value not handled.")]] auto getPosition() const noexcept
       -> const glm::vec3 &;
 };
+

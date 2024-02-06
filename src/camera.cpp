@@ -34,7 +34,7 @@ void FreeRoamCamera::processMouse_(GLFWwindow *window) noexcept {
     }
     yaw_ += (cur_x - last_cursor_x_) * CAM_SENSITIVITY;
     pitch_ += (last_cursor_y_ - cur_y) * CAM_SENSITIVITY;
-    pitch_ = std::clamp(pitch_, MINIMUM_PITCH_DEGREE, MAXIMUM_PITCH_DEGREE);
+    pitch_ = std::clamp(pitch_, MIN_PITCH_DEGREE, MAX_PITCH_DEGREE);
 
     last_cursor_x_ = cur_x;
     last_cursor_y_ = cur_y;
@@ -99,3 +99,4 @@ auto FreeRoamCamera::getMatrix() const noexcept -> const glm::mat4 & {
 auto FreeRoamCamera::getPosition() const noexcept -> const glm::vec3 & {
   return position_;
 }
+

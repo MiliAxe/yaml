@@ -54,7 +54,5 @@ _loader_error_log(std::string_view msg, std::string_view file, int32 line) {
 #define INITIAL_CAM_FOV 66.0f
 #define INITIAL_CAM_SPEED 5.0f
 #define CAM_SENSITIVITY 0.1f
-
-#define MAXIMUM_PITCH_DEGREE 89.999f
-#define MINIMUM_PITCH_DEGREE -89.999f
-
+#define MAX_PITCH_DEGREE 89.999f
+#define MIN_PITCH_DEGREE -89.999f
