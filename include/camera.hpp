@@ -11,6 +11,8 @@
 #include <glm/ext.hpp>
 
 // TODO: remember changing aspect ratio on GLFW window resize.
+// TODO: move the cursor to another class.
+// TODO: leave input handeling to Apllication class and delete from here.
 class FreeRoamCamera {
 private:
   float fov_ = INITIAL_CAM_FOV;
@@ -37,6 +39,7 @@ private:
   void processMouse_(GLFWwindow *window) noexcept;
   void processKeyboard_(GLFWwindow *window, float delta_time) noexcept;
   void updateMatrix_() noexcept;
+  auto getNewDirVec_() const noexcept -> glm::vec3;
 
 public:
   FreeRoamCamera() noexcept;
