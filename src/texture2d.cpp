@@ -71,6 +71,7 @@ void Texture2D::loadFromFile(const char *image_path) {
     format = GL_RGBA;
     break;
   }
+  bind();
   glTexImage2D(kTexture_type, 0, GL_RGBA, width, height, 0, format,
                GL_UNSIGNED_BYTE, data);
   generateMipmap();
