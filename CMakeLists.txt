@@ -21,6 +21,7 @@ target_sources(
           src/ebo.cpp
           src/vbo.cpp
           src/vao.cpp
+          src/utl.cpp
           src/shader.cpp
           src/shader_program.cpp
           src/texture2d.cpp
