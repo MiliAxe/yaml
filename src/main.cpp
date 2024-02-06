@@ -94,16 +94,8 @@ int main() {
   glm::mat4 model;
   initializeTransforms(model);
 
-  float current_time = (float)glfwGetTime();
-  float delta_time;
-  float last_time;
-
   glClearColor(0, 0, 0, 0);
   while (!glfwWindowShouldClose(window)) {
-    current_time = (float)glfwGetTime();
-    delta_time = current_time - last_time;
-    last_time = current_time;
-
     updateModelTransform(model);
 
     camera.update(window, delta_time);
