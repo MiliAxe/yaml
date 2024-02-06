@@ -8,7 +8,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
 
-auto FreeRoamCamera::getNewDirVec_() const noexcept -> glm::vec3 {
+void FreeRoamCamera::updateDirVec_() noexcept {
   glm::vec3 new_direction;
   new_direction.x =
       glm::cos(glm::radians(yaw_)) * glm::cos(glm::radians(pitch_));
@@ -16,7 +16,7 @@ auto FreeRoamCamera::getNewDirVec_() const noexcept -> glm::vec3 {
   new_direction.z =
       glm::sin(glm::radians(yaw_)) * glm::cos(glm::radians(pitch_));
 
-  return glm::normalize(new_direction);
+  direction_ = glm::normalize(new_direction);
 }
 
 void FreeRoamCamera::processMouse_(GLFWwindow *window) noexcept {
@@ -32,22 +32,14 @@ void FreeRoamCamera::processMouse_(GLFWwindow *window) noexcept {
       last_cursor_y_ = static_cast<float>(cur_y);
       first_click_move_ = false;
     }
-
-    float x_offset = cur_x - last_cursor_x_;
-    float y_offset = last_cursor_y_ - cur_y;
+    yaw_ += (cur_x - last_cursor_x_) * CAM_SENSITIVITY;
+    pitch_ += (last_cursor_y_ - cur_y) * CAM_SENSITIVITY;
+    pitch_ = std::clamp(pitch_, MINIMUM_PITCH_DEGREE, MAXIMUM_PITCH_DEGREE);
 
     last_cursor_x_ = cur_x;
     last_cursor_y_ = cur_y;
 
-    x_offset *= CAM_SENSITIVITY;
-    y_offset *= CAM_SENSITIVITY;
-
-    yaw_ += x_offset;
-    pitch_ += y_offset;
-
-    pitch_ = std::clamp(pitch_, MINIMUM_PITCH_DEGREE, MAXIMUM_PITCH_DEGREE);
-
-    direction_ = getNewDirVec_();
+    updateDirVec_();
 
   } else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) ==
              GLFW_RELEASE) {

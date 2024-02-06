@@ -4,6 +4,7 @@
  *  @brief Camera functionality for the model viewer.
  *
  */
+#pragma once
 
 #include "globals.hpp"
 
@@ -39,7 +40,7 @@ private:
   void processMouse_(GLFWwindow *window) noexcept;
   void processKeyboard_(GLFWwindow *window, float delta_time) noexcept;
   void updateMatrix_() noexcept;
-  auto getNewDirVec_() const noexcept -> glm::vec3;
+  void updateDirVec_() noexcept;
 
 public:
   FreeRoamCamera() noexcept;
