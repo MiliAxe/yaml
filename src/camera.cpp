@@ -22,28 +22,21 @@ void FreeRoamCamera::processMouse_(GLFWwindow *window) noexcept {
       first_click_move_ = false;
     }
 
-    float x_offset = cur_x - last_cursor_x_;
-    float y_offset = last_cursor_y_ - cur_y;
+    float x_offset = (cur_x - last_cursor_x_) * CAM_SENSITIVITY;
+    float y_offset = (last_cursor_y_ - cur_y) * CAM_SENSITIVITY;
 
     last_cursor_x_ = cur_x;
     last_cursor_y_ = cur_y;
 
-    x_offset *= CAM_SENSITIVITY;
-    y_offset *= CAM_SENSITIVITY;
+    // x_offset *= CAM_SENSITIVITY;
+    // y_offset *= CAM_SENSITIVITY;
 
     yaw_ += x_offset;
     pitch_ += y_offset;
 
-    pitch_ = std::clamp(pitch_, -89.999999f, 89.999999f);
+    pitch_ = std::clamp(pitch_, MIN_PITCH_DEGREE, MAX_PITCH_DEGREE);
 
-    glm::vec3 new_direction;
-    new_direction.x =
-        glm::cos(glm::radians(yaw_)) * glm::cos(glm::radians(pitch_));
-    new_direction.y = glm::sin(glm::radians(pitch_));
-    new_direction.z =
-        glm::sin(glm::radians(yaw_)) * glm::cos(glm::radians(pitch_));
-
-    direction_ = glm::normalize(new_direction);
+    direction_ = getNewDirVec_();
 
   } else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
@@ -81,6 +74,17 @@ void FreeRoamCamera::updateMatrix_() noexcept {
   glm::mat4 view = glm::lookAt(position_, position_ + direction_, up_);
 
   matrix_ = projection * view;
+}
+
+auto FreeRoamCamera::getNewDirVec_() const noexcept -> glm::vec3 {
+  glm::vec3 new_direction;
+  new_direction.x =
+      glm::cos(glm::radians(yaw_)) * glm::cos(glm::radians(pitch_));
+  new_direction.y = glm::sin(glm::radians(pitch_));
+  new_direction.z =
+      glm::sin(glm::radians(yaw_)) * glm::cos(glm::radians(pitch_));
+
+  return glm::normalize(new_direction);
 }
 
 FreeRoamCamera::FreeRoamCamera() noexcept {}
