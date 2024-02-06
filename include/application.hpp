@@ -8,6 +8,8 @@
 #pragma once
 
 #include "camera.hpp"
+#include "shader_program.hpp"
+#include "vao.hpp"
 
 #include <GLFW/glfw3.h>
 
@@ -36,6 +38,7 @@ private:
 
   void updateDeltaTime_() noexcept;
   void update_() noexcept;
+  void render_(ShaderProgram &shader, VAO &vao) const noexcept;
 
 public:
   Application();
