@@ -92,6 +92,12 @@ void FreeRoamCamera::setApsectRatio(float aspect_ratio) noexcept {
   aspect_ratio_ = aspect_ratio;
 }
 
+void FreeRoamCamera::setPosition(const glm::vec3 &position) noexcept {
+  position_ = position;
+}
+
+void FreeRoamCamera::setSpeed(float speed) noexcept { speed_ = speed; }
+
 auto FreeRoamCamera::getMatrix() const noexcept -> const glm::mat4 & {
   return matrix_;
 }
@@ -100,3 +106,12 @@ auto FreeRoamCamera::getPosition() const noexcept -> const glm::vec3 & {
   return position_;
 }
 
+auto FreeRoamCamera::getSpeed() const noexcept -> const float & {
+  return speed_;
+}
+
+auto FreeRoamCamera::getDirection() const noexcept -> const glm::vec3 & {
+  return direction_;
+}
+
+auto FreeRoamCamera::getUp() const noexcept -> const glm::vec3 & { return up_; }
