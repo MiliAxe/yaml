@@ -4,6 +4,7 @@
  *  @brief Camera functionality for the model viewer.
  *
  */
+#pragma once
 
 #include "globals.hpp"
 
@@ -11,8 +12,8 @@
 #include <glm/ext.hpp>
 
 // TODO: remember changing aspect ratio on GLFW window resize.
-// TODO: leave input handling to Application class.
-// TODO: create standalone cursor class.
+// TODO: move the cursor to another class.
+// TODO: leave input handeling to Apllication class and delete from here.
 class FreeRoamCamera {
 private:
   float fov_ = INITIAL_CAM_FOV;
@@ -30,16 +31,16 @@ private:
   float pitch_ = 0.0f;
   float yaw_ = -90.0f;
 
-  glm::vec3 up_ = {0.0f, 1.0f, 0.0f};
-  glm::vec3 position_ = {0.0f, 0.0f, 3.0f};
-  glm::vec3 direction_ = {0.0f, 0.0f, -1.0f};
+  glm::vec3 up_ = glm::vec3(0.0f, 1.0f, 0.0f);
+  glm::vec3 position_ = glm::vec3(0.0f, 0.0f, 3.0f);
+  glm::vec3 direction_ = glm::vec3(0.0f, 0.0f, -1.0f);
 
   glm::mat4 matrix_ = glm::mat4(1.0f);
 
   void processMouse_(GLFWwindow *window) noexcept;
   void processKeyboard_(GLFWwindow *window, float delta_time) noexcept;
   void updateMatrix_() noexcept;
-  auto getNewDirVec_() const noexcept -> glm::vec3;
+  void updateDirVec_() noexcept;
 
 public:
   FreeRoamCamera() noexcept;
@@ -53,3 +54,4 @@ public:
   [[nodiscard("value not handled.")]] auto getPosition() const noexcept
       -> const glm::vec3 &;
 };
+
