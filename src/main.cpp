@@ -72,42 +72,8 @@ void render(GLFWwindow *window, ShaderProgram &shader, VAO &vao) {
 }
 
 int main() {
-  // stbi_set_flip_vertically_on_load(true);
-  // GLFWwindow *window = fn::initGLFWandGLAD();
-  //
-  // ShaderProgram basic_shader("assets/shaders/basic_shaders/vert.glsl",
-  //                            "assets/shaders/basic_shaders/frag.glsl");
-  // CubeModel cube;
-  //
-  // VAO vao;
-  // VBO vbo;
-  // initializeCubeBuffers(vao, vbo, cube);
-  //
-  // Texture2D text0, text1;
-  // initializeCubeTextures(text0, text1);
-  //
-  // FreeRoamCamera camera;
-  //
-  // initializeOpenGLParams();
-  //
-  // glm::mat4 model;
-  // initializeTransforms(model);
-  //
-  // glClearColor(0, 0, 0, 0);
-  // while (!glfwWindowShouldClose(window)) {
-  //   updateModelTransform(model);
-  //
-  //   camera.update(window, delta_time);
-  //
-  //   updateShaderTransforms(basic_shader, model, camera.getMatrix());
-  //
-  //   render(window, basic_shader, vao);
-  // }
-  //
-  // basic_shader.deleteProgram();
 
   Application app;
-  app.init();
   app.run();
 
   return EXIT_SUCCESS;

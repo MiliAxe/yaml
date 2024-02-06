@@ -28,9 +28,10 @@ private:
   static void windowKeyCallback_(GLFWwindow *window, int key, int scan_code,
                                  int action, int mods) noexcept;
 
-  void windowResize_(int width, int height) noexcept;
+  void windowResize_(float width, float height) noexcept;
   void processInput_(GLFWwindow *window, int key, int action) noexcept;
 
+  void init_();
   void initGLFW_();
   void initGLAD_() const;
 
@@ -38,11 +39,9 @@ private:
 
   void updateDeltaTime_() noexcept;
   void update_() noexcept;
-  void render_(ShaderProgram &shader, VAO &vao) const noexcept;
 
 public:
   Application();
 
-  void init();
   void run();
 };

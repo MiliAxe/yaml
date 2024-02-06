@@ -7,6 +7,7 @@
 
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
+#include <iostream>
 
 // ######################### GLFW window callbacks #############################
 
@@ -14,6 +15,7 @@ void Application::windowSizeCallback_(GLFWwindow *window, int width,
                                       int height) noexcept {
   Application *instance =
       reinterpret_cast<Application *>(glfwGetWindowUserPointer(window));
+  glViewport(0, 0, width, height);
   instance->windowResize_(width, height);
 }
 
@@ -26,9 +28,8 @@ void Application::windowKeyCallback_(GLFWwindow *window, int key, int scan_code,
 
 // ##############################################################################
 
-void Application::windowResize_(int width, int height) noexcept {
-  glViewport(0, 0, width, height);
-  camera_.setApsectRatio(width / static_cast<float>(height));
+void Application::windowResize_(float width, float height) noexcept {
+  camera_.setApsectRatio(width / height);
 }
 
 void Application::processInput_(GLFWwindow *window, int key,
@@ -72,7 +73,6 @@ void Application::initGLAD_() const {
 
 void Application::setGlParams_() const noexcept {
   glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
-
   glEnable(GL_BLEND);
   glEnable(GL_DEPTH_TEST);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -90,20 +90,12 @@ void Application::update_() noexcept {
   camera_.update(window_, delta_time_);
 }
 
-void Application::render_(ShaderProgram &shader, VAO &vao) const noexcept {
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  shader.activate();
-  vao.bind();
-  glDrawArrays(GL_TRIANGLES, 0, 36);
-  glfwSwapBuffers(window_);
-  glfwPollEvents();
-}
-
 Application::Application() {
+  init_();
   glfwSetWindowUserPointer(window_, reinterpret_cast<void *>(this));
 }
 
-void Application::init() {
+void Application::init_() {
   initGLFW_();
   initGLAD_();
   setGlParams_();
@@ -148,6 +140,15 @@ void Application::run() {
     shader.deActive();
   };
 
+  auto render = [&](ShaderProgram &shader, VAO &vao) noexcept {
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    shader.activate();
+    vao.bind();
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+    glfwSwapBuffers(window_);
+    glfwPollEvents();
+  };
+
   ShaderProgram basic_shader("assets/shaders/basic_shaders/vert.glsl",
                              "assets/shaders/basic_shaders/frag.glsl");
   CubeModel cube;
@@ -170,6 +171,6 @@ void Application::run() {
 
     updateShaderTransforms(basic_shader, model, camera_.getMatrix());
 
-    render_(basic_shader, vao);
+    render(basic_shader, vao);
   }
 }
