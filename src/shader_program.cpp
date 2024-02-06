@@ -1,13 +1,17 @@
 #include "shader_program.hpp"
+#include "globals.hpp"
 #include "shader.hpp"
 
-void ShaderProgram::checkErrors_() const noexcept {
+void ShaderProgram::checkErrors_() const {
   GLint success;
   glGetProgramiv(id_, GL_LINK_STATUS, &success);
+
   if (!success) {
     GLchar info_log[512];
     glGetProgramInfoLog(id_, sizeof(info_log), nullptr, info_log);
     ERROR_LOG("failed linking shader program.");
+
+    throw RUNTIME_ERROR;
   }
 }
 

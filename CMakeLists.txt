@@ -18,13 +18,13 @@ add_executable(model_loader)
 target_sources(
   model_loader
   PRIVATE src/main.cpp
+          src/ebo.cpp
+          src/vbo.cpp
+          src/vao.cpp
           src/shader.cpp
           src/shader_program.cpp
-          src/vbo.cpp
-          src/ebo.cpp
-          src/vao.cpp
-          src/utl.cpp
-          src/texture2d.cpp)
+          src/texture2d.cpp
+          src/camera.cpp)
 target_include_directories(model_loader
                            PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include/")
 target_link_libraries(model_loader PRIVATE glfw glad stb_image)

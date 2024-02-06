@@ -1,12 +1,12 @@
 #include "texture2d.hpp"
 #include "globals.hpp"
-
 #include <format>
 #include <stb_image.h>
 
 auto Texture2D::getImageBinary(const char *image_path, int *width, int *height,
                                int *n_channels) -> GLubyte * {
-  GLubyte *data = stbi_load(image_path, width, height, n_channels, 0);
+  GLubyte *data =
+      stbi_load(image_path, width, height, n_channels, STBI_rgb_alpha);
 
   if (!data) {
     ERROR_LOG(std::format("Could not load image from {}\n Reason: {}",
@@ -62,19 +62,8 @@ void Texture2D::deleteTexture() const noexcept { glDeleteTextures(1, &id_); }
 
 void Texture2D::loadFromFile(const char *image_path) {
   int width, height, n_channels;
-  GLubyte *data =
-      getImageBinary(image_path, &width, &height, &n_channels);
-  GLenum image_format;
-  switch (n_channels) {
-  case 3:
-    image_format = GL_RGB;
-    break;
-  case 4:
-    image_format = GL_RGBA;
-    break;
-  }
-  bind();
-  glTexImage2D(kTexture_type, 0, GL_RGBA, width, height, 0, image_format,
+  GLubyte *data = getImageBinary(image_path, &width, &height, &n_channels);
+  glTexImage2D(kTexture_type, 0, GL_RGBA, width, height, 0, GL_RGBA,
                GL_UNSIGNED_BYTE, data);
   generateMipmap();
   unbind();

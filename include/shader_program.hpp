@@ -5,6 +5,7 @@
  *   	   be used during the graphcis pipeline.
  *
  */
+
 #pragma once
 
 #include "globals.hpp"
@@ -16,7 +17,7 @@ class ShaderProgram {
 private:
   GLuint id_;
 
-  void checkErrors_() const noexcept;
+  void checkErrors_() const;
 
 public:
   ShaderProgram(const char *vertex_path, const char *fragment_path) noexcept;
