@@ -48,10 +48,17 @@ public:
   void update(GLFWwindow *window, float delta_time) noexcept;
 
   void setApsectRatio(float aspect_ratio) noexcept;
+  void setPosition(const glm::vec3 &position) noexcept;
+  void setSpeed(float speed) noexcept;
 
   [[nodiscard("value not handled.")]] auto getMatrix() const noexcept
       -> const glm::mat4 &;
   [[nodiscard("value not handled.")]] auto getPosition() const noexcept
       -> const glm::vec3 &;
+  [[nodiscard("value not handled.")]] auto getSpeed() const noexcept -> const
+      float &;
+  [[nodiscard("value not handled.")]] auto getDirection() const noexcept
+      -> const glm::vec3 &;
+  [[nodiscard("value not handled.")]] auto getUp() const noexcept
+      -> const glm::vec3 &;
 };
-
