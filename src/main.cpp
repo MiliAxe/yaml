@@ -1,5 +1,5 @@
 #include "camera.hpp"
-#include "ebo.hpp"
+#include "cube_model.hpp"
 #include "globals.hpp"
 #include "shader_program.hpp"
 #include "texture2d.hpp"
@@ -16,48 +16,9 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <stb_image.h>
-#include <vector>
 
-float vertices[] = {
-    -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 0.5f,  -0.5f, -0.5f, 1.0f, 0.0f,
-    0.5f,  0.5f,  -0.5f, 1.0f, 1.0f, 0.5f,  0.5f,  -0.5f, 1.0f, 1.0f,
-    -0.5f, 0.5f,  -0.5f, 0.0f, 1.0f, -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
-
-    -0.5f, -0.5f, 0.5f,  0.0f, 0.0f, 0.5f,  -0.5f, 0.5f,  1.0f, 0.0f,
-    0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-    -0.5f, 0.5f,  0.5f,  0.0f, 1.0f, -0.5f, -0.5f, 0.5f,  0.0f, 0.0f,
-
-    -0.5f, 0.5f,  0.5f,  1.0f, 0.0f, -0.5f, 0.5f,  -0.5f, 1.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-    -0.5f, -0.5f, 0.5f,  0.0f, 0.0f, -0.5f, 0.5f,  0.5f,  1.0f, 0.0f,
-
-    0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.5f,  0.5f,  -0.5f, 1.0f, 1.0f,
-    0.5f,  -0.5f, -0.5f, 0.0f, 1.0f, 0.5f,  -0.5f, -0.5f, 0.0f, 1.0f,
-    0.5f,  -0.5f, 0.5f,  0.0f, 0.0f, 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-    -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 0.5f,  -0.5f, -0.5f, 1.0f, 1.0f,
-    0.5f,  -0.5f, 0.5f,  1.0f, 0.0f, 0.5f,  -0.5f, 0.5f,  1.0f, 0.0f,
-    -0.5f, -0.5f, 0.5f,  0.0f, 0.0f, -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-
-    -0.5f, 0.5f,  -0.5f, 0.0f, 1.0f, 0.5f,  0.5f,  -0.5f, 1.0f, 1.0f,
-    0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-    -0.5f, 0.5f,  0.5f,  0.0f, 0.0f, -0.5f, 0.5f,  -0.5f, 0.0f, 1.0f};
-
-void initializeCubeVertices(std::vector<Vertex> &VBO_vertices) {
-  VBO_vertices.reserve(36);
-  for (uint8 i = 0; i < 36; ++i) {
-    Vertex tmp_vertex;
-    tmp_vertex.position = {vertices[i * 5 + 0], vertices[i * 5 + 1],
-                           vertices[i * 5 + 2]};
-    tmp_vertex.uv = {vertices[i * 5 + 3], vertices[i * 5 + 4]};
-    VBO_vertices.push_back(tmp_vertex);
-  }
-}
-
-void initializeCubeBuffers(VAO &vao, VBO &vbo) {
-  std::vector<Vertex> VBO_vertices;
-  initializeCubeVertices(VBO_vertices);
-  vbo.setData(VBO_vertices);
+void initializeCubeBuffers(VAO &vao, VBO &vbo, CubeModel &model) {
+  vbo.setData(model.cube);
   vao.linkVBO(vbo, 0, 3, GL_FLOAT, sizeof(Vertex), 0);
   vao.linkVBO(vbo, 1, 3, GL_FLOAT, sizeof(Vertex), offsetof(Vertex, color));
   vao.linkVBO(vbo, 2, 2, GL_FLOAT, sizeof(Vertex), offsetof(Vertex, uv));
@@ -74,16 +35,7 @@ void initializeOpenGLParams() {
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
-void initializeTransforms(glm::mat4 &model, glm::mat4 &view,
-                          glm::mat4 &projection) {
-  model = glm::mat4(1.0f);
-  // view = glm::mat4(1.0f);
-  // projection = glm::mat4(1.0f);
-  // projection = glm::perspective(glm::radians(fov),
-  //                               (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT,
-  //                               0.1f, 100.0f);
-  // projection = glm::ortho(-2.0f, 2.0f, 2.1f, -2.0f, -3.0f, 1000.0f);
-}
+void initializeTransforms(glm::mat4 &model) { model = glm::mat4(1.0f); }
 
 void updateModelTransform(glm::mat4 &model) {
   model = glm::mat4(1.0f);
@@ -126,22 +78,21 @@ int main() {
 
   ShaderProgram basic_shader("assets/shaders/basic_shaders/vert.glsl",
                              "assets/shaders/basic_shaders/frag.glsl");
+  CubeModel cube;
 
   VAO vao;
   VBO vbo;
-  initializeCubeBuffers(vao, vbo);
+  initializeCubeBuffers(vao, vbo, cube);
 
   Texture2D text0, text1;
   // initializeCubeTextures(text0, text1);
 
   FreeRoamCamera camera;
 
-  // bindTexturesToShader(basic_shader, text0, text1);
-
   initializeOpenGLParams();
 
-  glm::mat4 model, view, projection;
-  initializeTransforms(model, view, projection);
+  glm::mat4 model;
+  initializeTransforms(model);
 
   float current_time = (float)glfwGetTime();
   float delta_time;
@@ -152,14 +103,8 @@ int main() {
     current_time = (float)glfwGetTime();
     delta_time = current_time - last_time;
     last_time = current_time;
-    //
-    // processCameraInput(window, delta_time);
-
-    // updateProjectionMatrix(projection);
 
     updateModelTransform(model);
-
-    // updateViewTransform(view);
 
     camera.update(window, delta_time);
 
