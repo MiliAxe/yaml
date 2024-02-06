@@ -15,6 +15,9 @@ class Application {
 private:
   GLFWwindow *window_;
   FreeRoamCamera camera_;
+
+  float delta_time_;
+
   // TODO: model
   // TODO: std::vector of shaders
 
@@ -30,6 +33,9 @@ private:
   void initGLAD_() const;
 
   void setGlParams_() const noexcept;
+
+  void updateDeltaTime_() noexcept;
+  void update_() noexcept;
 
 public:
   Application();

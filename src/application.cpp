@@ -1,7 +1,9 @@
 #include "application.hpp"
 #include "globals.hpp"
 
+#include <GLFW/glfw3.h>
 #include <glad/glad.h>
+#include <iostream>
 
 // ######################### GLFW window callbacks #############################
 
@@ -73,6 +75,15 @@ void Application::setGlParams_() const noexcept {
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
+void Application::updateDeltaTime_() noexcept {
+  float current_time = static_cast<float>(glfwGetTime());
+  static float last_time;
+  delta_time_ = current_time - last_time;
+  last_time = current_time;
+}
+
+void Application::update_() noexcept { updateDeltaTime_(); }
+
 Application::Application() {
   glfwSetWindowUserPointer(window_, reinterpret_cast<void *>(this));
 }
@@ -87,6 +98,8 @@ void Application::run() {
   glClearColor(0, 0, 0, 0);
   while (!glfwWindowShouldClose(window_)) {
     glClear(GL_COLOR_BUFFER_BIT);
+
+    update_();
 
     glfwPollEvents();
     glfwSwapBuffers(window_);
