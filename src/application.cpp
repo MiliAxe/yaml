@@ -7,7 +7,6 @@
 
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
-#include <iostream>
 
 // ######################### GLFW window callbacks #############################
 
@@ -19,49 +18,64 @@ void Application::windowSizeCallback_(GLFWwindow *window, int width,
   instance->windowResize_(width, height);
 }
 
-void Application::windowKeyCallback_(GLFWwindow *window, int key, int scan_code,
-                                     int action, int mods) noexcept {
-  Application *instance =
-      reinterpret_cast<Application *>(glfwGetWindowUserPointer(window));
-  instance->processInput_(window, key, action);
-}
-
-// ##############################################################################
-
 void Application::windowResize_(float width, float height) noexcept {
   camera_.setApsectRatio(width / height);
 }
 
-void Application::processInput_(GLFWwindow *window, int key,
-                                int action) noexcept {
+void Application::windowKeyCallback_(GLFWwindow *window, int key,
+                                     [[maybe_unused]] int scan_code, int action,
+                                     [[maybe_unused]] int mods) noexcept {
   if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
     glfwSetWindowShouldClose(window, 1);
   }
+}
 
-  auto new_pos = camera_.getPosition();
+// ##############################################################################
+
+void Application::processKeyboardInput_() noexcept {
+
+  auto new_position = camera_.getPosition();
   float delta_speed = camera_.getSpeed() * delta_time_;
-  if (key == GLFW_KEY_W && action == GLFW_PRESS) {
-    new_pos += delta_speed * camera_.getDirection();
+  if (glfwGetKey(window_, GLFW_KEY_W) == GLFW_PRESS) {
+    new_position += delta_speed * camera_.getDirection();
   }
-  if (key == GLFW_KEY_S && action == GLFW_PRESS) {
-    new_pos -= delta_speed * camera_.getDirection();
+  if (glfwGetKey(window_, GLFW_KEY_S) == GLFW_PRESS) {
+    new_position -= delta_speed * camera_.getDirection();
   }
-  if (key == GLFW_KEY_D && action == GLFW_PRESS) {
-    new_pos += delta_speed * glm::normalize(glm::cross(camera_.getDirection(),
-                                                       camera_.getUp()));
+  if (glfwGetKey(window_, GLFW_KEY_D) == GLFW_PRESS) {
+    new_position +=
+        delta_speed *
+        glm::normalize(glm::cross(camera_.getDirection(), camera_.getUp()));
   }
-  if (key == GLFW_KEY_A && action == GLFW_PRESS) {
-    new_pos -= delta_speed * glm::normalize(glm::cross(camera_.getDirection(),
-                                                       camera_.getUp()));
+  if (glfwGetKey(window_, GLFW_KEY_A) == GLFW_PRESS) {
+    new_position -=
+        delta_speed *
+        glm::normalize(glm::cross(camera_.getDirection(), camera_.getUp()));
   }
-  if (key == GLFW_KEY_W && action == GLFW_PRESS) {
+  if (glfwGetKey(window_, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
     camera_.setSpeed(INITIAL_CAM_SPEED * 3.0f);
   }
-  if (key == GLFW_KEY_W && action == GLFW_PRESS) {
+  if (glfwGetKey(window_, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE) {
     camera_.setSpeed(INITIAL_CAM_SPEED);
   }
+  camera_.setPosition(new_position);
+}
 
-  camera_.setPosition(new_pos);
+void Application::processMouseInput_() noexcept {
+  if (glfwGetMouseButton(window_, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
+    glfwSetInputMode(window_, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+    double current_x;
+    double current_y;
+    glfwGetCursorPos(window_, &current_x, &current_y);
+
+    camera_.updateYawAndPitch(current_x, current_y);
+
+  } else if (glfwGetMouseButton(window_, GLFW_MOUSE_BUTTON_LEFT) ==
+             GLFW_RELEASE) {
+    glfwSetInputMode(window_, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    camera_.setFirstMove(true);
+  }
 }
 
 void Application::initGLFW_() {
@@ -112,7 +126,9 @@ void Application::updateDeltaTime_() noexcept {
 
 void Application::update_() noexcept {
   updateDeltaTime_();
-  camera_.update(window_, delta_time_);
+  processKeyboardInput_();
+  processMouseInput_();
+  camera_.update();
 }
 
 Application::Application() {

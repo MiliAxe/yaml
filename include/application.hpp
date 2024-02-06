@@ -8,8 +8,6 @@
 #pragma once
 
 #include "camera.hpp"
-#include "shader_program.hpp"
-#include "vao.hpp"
 
 #include <GLFW/glfw3.h>
 
@@ -29,7 +27,8 @@ private:
                                  int action, int mods) noexcept;
 
   void windowResize_(float width, float height) noexcept;
-  void processInput_(GLFWwindow *window, int key, int action) noexcept;
+  void processKeyboardInput_() noexcept;
+  void processMouseInput_() noexcept;
 
   void init_();
   void initGLFW_();

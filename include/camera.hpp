@@ -15,6 +15,9 @@
 // TODO: move the cursor to another class.
 // TODO: leave input handeling to Apllication class and delete from here.
 class FreeRoamCamera {
+
+  // friend class Application;
+
 private:
   float fov_ = INITIAL_CAM_FOV;
   float aspect_ratio_ = WINDOW_WIDTH / static_cast<float>(WINDOW_HEIGHT);
@@ -37,19 +40,19 @@ private:
 
   glm::mat4 matrix_ = glm::mat4(1.0f);
 
-  void processMouse_(GLFWwindow *window) noexcept;
-  void processKeyboard_(GLFWwindow *window, float delta_time) noexcept;
   void updateMatrix_() noexcept;
   void updateDirVec_() noexcept;
 
 public:
   FreeRoamCamera() noexcept;
 
-  void update(GLFWwindow *window, float delta_time) noexcept;
+  void update() noexcept;
 
   void setApsectRatio(float aspect_ratio) noexcept;
   void setPosition(const glm::vec3 &position) noexcept;
   void setSpeed(float speed) noexcept;
+  void setFirstMove(bool value) noexcept;
+  void updateYawAndPitch(double x, double y);
 
   [[nodiscard("value not handled.")]] auto getMatrix() const noexcept
       -> const glm::mat4 &;
@@ -61,4 +64,6 @@ public:
       -> const glm::vec3 &;
   [[nodiscard("value not handled.")]] auto getUp() const noexcept
       -> const glm::vec3 &;
+  [[nodiscard("value not handled.")]] auto getFirstMove() const noexcept
+      -> const bool &;
 };

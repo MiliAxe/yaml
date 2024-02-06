@@ -19,57 +19,57 @@ void FreeRoamCamera::updateDirVec_() noexcept {
   direction_ = glm::normalize(new_direction);
 }
 
-void FreeRoamCamera::processMouse_(GLFWwindow *window) noexcept {
-  if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
-    double cur_x;
-    double cur_y;
-    glfwGetCursorPos(window, &cur_x, &cur_y);
-
-    if (first_click_move_) {
-      last_cursor_x_ = static_cast<float>(cur_x);
-      last_cursor_y_ = static_cast<float>(cur_y);
-      first_click_move_ = false;
-    }
-    yaw_ += (cur_x - last_cursor_x_) * CAM_SENSITIVITY;
-    pitch_ += (last_cursor_y_ - cur_y) * CAM_SENSITIVITY;
-    pitch_ = std::clamp(pitch_, MIN_PITCH_DEGREE, MAX_PITCH_DEGREE);
-
-    last_cursor_x_ = cur_x;
-    last_cursor_y_ = cur_y;
-
-    updateDirVec_();
-
-  } else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) ==
-             GLFW_RELEASE) {
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-    first_click_move_ = true;
+void FreeRoamCamera::updateYawAndPitch(double x, double y) {
+  if (first_click_move_) {
+    last_cursor_x_ = static_cast<float>(x);
+    last_cursor_y_ = static_cast<float>(y);
+    first_click_move_ = false;
   }
+  yaw_ += (x - last_cursor_x_) * CAM_SENSITIVITY;
+  pitch_ += (last_cursor_y_ - y) * CAM_SENSITIVITY;
+  pitch_ = std::clamp(pitch_, MIN_PITCH_DEGREE, MAX_PITCH_DEGREE);
+
+  last_cursor_x_ = x;
+  last_cursor_y_ = y;
 }
 
-void FreeRoamCamera::processKeyboard_(GLFWwindow *window,
-                                      float delta_time) noexcept {
-  float delta_speed = speed_ * delta_time;
-  if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-    position_ += delta_speed * direction_;
-  }
-  if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-    position_ -= delta_speed * direction_;
-  }
-  if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-    position_ += delta_speed * glm::normalize(glm::cross(direction_, up_));
-  }
-  if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-    position_ -= delta_speed * glm::normalize(glm::cross(direction_, up_));
-  }
-  if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
-    speed_ = INITIAL_CAM_SPEED * 3.0f;
-  }
-  if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE) {
-    speed_ = INITIAL_CAM_SPEED;
-  }
-}
+// void FreeRoamCamera::processMouse_(GLFWwindow *window) noexcept {
+//   if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
+//     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+//
+//     double cur_x;
+//     double cur_y;
+//     glfwGetCursorPos(window, &cur_x, &cur_y);
+//
+//   } else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) ==
+//              GLFW_RELEASE) {
+//     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+//     first_click_move_ = true;
+//   }
+// }
+
+// void FreeRoamCamera::processKeyboard_(GLFWwindow *window,
+//                                       float delta_time) noexcept {
+//   float delta_speed = speed_ * delta_time;
+//   if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+//     position_ += delta_speed * direction_;
+//   }
+//   if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+//     position_ -= delta_speed * direction_;
+//   }
+//   if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+//     position_ += delta_speed * glm::normalize(glm::cross(direction_, up_));
+//   }
+//   if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+//     position_ -= delta_speed * glm::normalize(glm::cross(direction_, up_));
+//   }
+//   if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+//     speed_ = INITIAL_CAM_SPEED * 3.0f;
+//   }
+//   if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE) {
+//     speed_ = INITIAL_CAM_SPEED;
+//   }
+// }
 
 void FreeRoamCamera::updateMatrix_() noexcept {
   glm::mat4 projection = glm::perspective(glm::radians(fov_), aspect_ratio_,
@@ -82,9 +82,8 @@ void FreeRoamCamera::updateMatrix_() noexcept {
 
 FreeRoamCamera::FreeRoamCamera() noexcept {}
 
-void FreeRoamCamera::update(GLFWwindow *window, float delta_time) noexcept {
-  processKeyboard_(window, delta_time);
-  processMouse_(window);
+void FreeRoamCamera::update() noexcept {
+  updateDirVec_();
   updateMatrix_();
 }
 
@@ -97,6 +96,14 @@ void FreeRoamCamera::setPosition(const glm::vec3 &position) noexcept {
 }
 
 void FreeRoamCamera::setSpeed(float speed) noexcept { speed_ = speed; }
+
+void FreeRoamCamera::setFirstMove(bool value) noexcept {
+  first_click_move_ = value;
+}
+
+// void FreeRoamCamera::setDirection(const glm::vec3 &direction) noexcept {
+//   direction_
+// }
 
 auto FreeRoamCamera::getMatrix() const noexcept -> const glm::mat4 & {
   return matrix_;
