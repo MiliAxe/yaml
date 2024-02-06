@@ -47,12 +47,12 @@ public:
   FreeRoamCamera() noexcept;
 
   void update() noexcept;
+  void updateYawAndPitch(double x, double y);
 
   void setApsectRatio(float aspect_ratio) noexcept;
   void setPosition(const glm::vec3 &position) noexcept;
   void setSpeed(float speed) noexcept;
   void setFirstMove(bool value) noexcept;
-  void updateYawAndPitch(double x, double y);
 
   [[nodiscard("value not handled.")]] auto getMatrix() const noexcept
       -> const glm::mat4 &;
