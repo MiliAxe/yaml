@@ -33,6 +33,31 @@ void Application::processInput_(GLFWwindow *window, int key,
   if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
     glfwSetWindowShouldClose(window, 1);
   }
+
+  auto new_pos = camera_.getPosition();
+  float delta_speed = camera_.getSpeed() * delta_time_;
+  if (key == GLFW_KEY_W && action == GLFW_PRESS) {
+    new_pos += delta_speed * camera_.getDirection();
+  }
+  if (key == GLFW_KEY_S && action == GLFW_PRESS) {
+    new_pos -= delta_speed * camera_.getDirection();
+  }
+  if (key == GLFW_KEY_D && action == GLFW_PRESS) {
+    new_pos += delta_speed * glm::normalize(glm::cross(camera_.getDirection(),
+                                                       camera_.getUp()));
+  }
+  if (key == GLFW_KEY_A && action == GLFW_PRESS) {
+    new_pos -= delta_speed * glm::normalize(glm::cross(camera_.getDirection(),
+                                                       camera_.getUp()));
+  }
+  if (key == GLFW_KEY_W && action == GLFW_PRESS) {
+    camera_.setSpeed(INITIAL_CAM_SPEED * 3.0f);
+  }
+  if (key == GLFW_KEY_W && action == GLFW_PRESS) {
+    camera_.setSpeed(INITIAL_CAM_SPEED);
+  }
+
+  camera_.setPosition(new_pos);
 }
 
 void Application::initGLFW_() {
