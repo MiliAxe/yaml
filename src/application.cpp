@@ -25,15 +25,6 @@ void Application::windowKeyCallback_(GLFWwindow *window, int32 key,
   }
 }
 
-// void Application::processKeyboardInput_() noexcept {
-//   ON_KEY_PRESS(GLFW_KEY_W) camera_.transform.moveForward(delta_time_);
-//   ON_KEY_PRESS(GLFW_KEY_S) camera_.transform.moveBackward(delta_time_);
-//   ON_KEY_PRESS(GLFW_KEY_D) camera_.transform.moveRight(delta_time_);
-//   ON_KEY_PRESS(GLFW_KEY_A) camera_.transform.moveLeft(delta_time_);
-//   ON_KEY_PRESS(GLFW_KEY_LEFT_SHIFT) camera_.transform.setFastSpeed();
-//   ON_KEY_RELEASE(GLFW_KEY_LEFT_SHIFT) camera_.transform.setNormalSpeed();
-// }
-
 #define SET_CURSOR_MODE(MODE) glfwSetInputMode(window, GLFW_CURSOR, MODE)
 
 auto Application::Mouse::mousePressReturnOffset(GLFWwindow *window) -> Cursor {
@@ -59,16 +50,15 @@ void Application::Mouse::mouseRelease(GLFWwindow *window) {
 #define ON_MOUSE_BUTTON_RELEASE(BUTTON)                                        \
   if (glfwGetMouseButton(window_, BUTTON) == GLFW_RELEASE)
 
-// void Application::processMouseInput_() noexcept {
-//   ON_MOUSE_BUTTON_PRESS(GLFW_MOUSE_BUTTON_LEFT) {
-//     Cursor offset = mouse.mousePressReturnOffset(window_);
-//
-//     camera_.processInput(window_, offset, delta_time_);
-//   }
-//   ON_MOUSE_BUTTON_RELEASE(GLFW_MOUSE_BUTTON_LEFT) {
-//     mouse.mouseRelease(window_);
-//   }
-// }
+void Application::processInput_() noexcept {
+  ON_MOUSE_BUTTON_PRESS(GLFW_MOUSE_BUTTON_LEFT) {
+    Cursor offset = mouse.mousePressReturnOffset(window_);
+    camera_.processInput(window_, offset, delta_time_);
+  }
+  ON_MOUSE_BUTTON_RELEASE(GLFW_MOUSE_BUTTON_LEFT) {
+    mouse.mouseRelease(window_);
+  }
+}
 
 void Application::init_() {
   initGLFW_();
@@ -124,8 +114,6 @@ void Application::updateDeltaTime_() noexcept {
 
 void Application::update_() noexcept {
   updateDeltaTime_();
-  // processKeyboardInput_();
-  // processMouseInput_();
   camera_.update();
 }
 
