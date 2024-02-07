@@ -42,8 +42,8 @@ private:
   static void setGlParams_() noexcept;
 
   void windowResize_(f32 width, f32 height) noexcept;
-  void processKeyboardInput_() noexcept;
-  void processMouseInput_() noexcept;
+  // void processKeyboardInput_() noexcept;
+  // void processMouseInput_() noexcept;
 
   void init_();
   void initGLFW_();

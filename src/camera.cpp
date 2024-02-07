@@ -2,13 +2,12 @@
 #include "globals.hpp"
 
 #include <GLFW/glfw3.h>
-#include <algorithm>
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/ext/quaternion_geometric.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
 
-void FreeRoamCamera::CameraTransform::updateDirection_() noexcept {
+void FreeRoamCamera::updateDirection_() noexcept {
   glm::vec3 new_direction;
   new_direction.x =
       glm::cos(glm::radians(yaw_)) * glm::cos(glm::radians(pitch_));
@@ -19,67 +18,91 @@ void FreeRoamCamera::CameraTransform::updateDirection_() noexcept {
   direction_ = glm::normalize(new_direction);
 }
 
-auto FreeRoamCamera::CameraTransform::getView_() -> glm::mat4 {
+auto FreeRoamCamera::getView_() -> glm::mat4 {
   return glm::lookAt(position_, position_ + direction_, up_);
 }
 
-void FreeRoamCamera::CameraTransform::updateYawPitch(const Cursor &offset) {
+auto FreeRoamCamera::getDeltaSpeed_(f32 delta_time) const noexcept -> f32 {
+  return delta_time * speed_;
+}
+
+void FreeRoamCamera::updateYawPitch(const Cursor &offset) {
   pitch_ += -offset.y_ * CAM_SENSITIVITY;
-  pitch_ = std::clamp(pitch_, MIN_PITCH_DEGREE, MAX_PITCH_DEGREE);
+  pitch_ = glm::clamp(pitch_, MIN_PITCH_DEGREE, MAX_PITCH_DEGREE);
   yaw_ += offset.x_ * CAM_SENSITIVITY;
 }
 
-void FreeRoamCamera::updateMatrix_() noexcept {
+void FreeRoamCamera::setNormalSpeed_() noexcept { speed_ = INITIAL_CAM_SPEED; }
+
+void FreeRoamCamera::setFastSpeed_() noexcept {
+  speed_ = INITIAL_CAM_SPEED * SPEED_GAIN_COEFFICIENT;
+}
+
+void FreeRoamCamera::moveForward(f32 delta_time) noexcept {
+  position_ += getDeltaSpeed_(delta_time) * direction_;
+}
+
+void FreeRoamCamera::moveBackward(f32 delta_time) noexcept {
+  position_ -= getDeltaSpeed_(delta_time) * direction_;
+}
+
+void FreeRoamCamera::moveLeft(f32 delta_time) noexcept {
+  position_ -=
+      getDeltaSpeed_(delta_time) * glm::normalize(glm::cross(direction_, up_));
+}
+
+void FreeRoamCamera::moveRight(f32 delta_time) noexcept {
+  position_ +=
+      getDeltaSpeed_(delta_time) * glm::normalize(glm::cross(direction_, up_));
+}
+
+void BaseCamera::updateMatrix_() noexcept {
   glm::mat4 projection = glm::perspective(glm::radians(fov_), aspect_ratio_,
                                           NEAR_PLANE, FAR_PLANE);
 
-  matrix_ = projection * transform.getView_();
+  matrix_ = projection * getView_();
+}
+
+#define ON_KEY_PRESS(KEY) if (glfwGetKey(window, KEY) == GLFW_PRESS)
+#define ON_KEY_RELEASE(KEY) if (glfwGetKey(window, KEY) == GLFW_RELEASE)
+
+void FreeRoamCamera::processKeyboardInput_(GLFWwindow *window,
+                                           f32 delta_time) noexcept {
+  ON_KEY_PRESS(GLFW_KEY_W) moveForward(delta_time);
+  ON_KEY_PRESS(GLFW_KEY_S) moveBackward(delta_time);
+  ON_KEY_PRESS(GLFW_KEY_D) moveRight(delta_time);
+  ON_KEY_PRESS(GLFW_KEY_A) moveLeft(delta_time);
+  ON_KEY_PRESS(GLFW_KEY_LEFT_SHIFT) setFastSpeed_();
+  ON_KEY_RELEASE(GLFW_KEY_LEFT_SHIFT) setNormalSpeed_();
+}
+
+#define ON_MOUSE_BUTTON_PRESS(BUTTON)                                          \
+  if (glfwGetMouseButton(window_, BUTTON) == GLFW_PRESS)
+#define ON_MOUSE_BUTTON_RELEASE(BUTTON)                                        \
+  if (glfwGetMouseButton(window_, BUTTON) == GLFW_RELEASE)
+
+void FreeRoamCamera::processMouseInput_(const Cursor &offset_cursor) noexcept {
+  updateYawPitch(offset_cursor);
 }
 
 FreeRoamCamera::FreeRoamCamera() noexcept {}
 
 void FreeRoamCamera::update() noexcept {
-  transform.updateDirection_();
+  updateDirection_();
   updateMatrix_();
 }
 
-void FreeRoamCamera::setApsectRatio(f32 aspect_ratio) noexcept {
+void BaseCamera::setApsectRatio(f32 aspect_ratio) noexcept {
   aspect_ratio_ = aspect_ratio;
 }
 
-auto FreeRoamCamera::getMatrix() const noexcept -> const glm::mat4 & {
+void FreeRoamCamera::processInput(GLFWwindow *window,
+                                  const Cursor &cursor_offset,
+                                  f32 delta_time) noexcept {
+  processKeyboardInput_(window, delta_time);
+  processMouseInput_(cursor_offset);
+}
+
+auto BaseCamera::getMatrix() const noexcept -> const glm::mat4 & {
   return matrix_;
-}
-
-void FreeRoamCamera::CameraTransform::setNormalSpeed() noexcept {
-  speed_ = INITIAL_CAM_SPEED;
-}
-
-void FreeRoamCamera::CameraTransform::setFastSpeed() noexcept {
-  speed_ = INITIAL_CAM_SPEED * SPEED_GAIN_COEFFICIENT;
-}
-
-auto FreeRoamCamera::CameraTransform::getDeltaSpeed_(
-    f32 delta_time) const noexcept -> f32 {
-  return delta_time * speed_;
-}
-
-void FreeRoamCamera::CameraTransform::moveForward(f32 delta_time) noexcept {
-  f32 delta_speed = getDeltaSpeed_(delta_time);
-  position_ += delta_speed * direction_;
-}
-
-void FreeRoamCamera::CameraTransform::moveBackward(f32 delta_time) noexcept {
-  f32 delta_speed = getDeltaSpeed_(delta_time);
-  position_ -= delta_speed * direction_;
-}
-
-void FreeRoamCamera::CameraTransform::moveLeft(f32 delta_time) noexcept {
-  f32 delta_speed = getDeltaSpeed_(delta_time);
-  position_ -= delta_speed * glm::normalize(glm::cross(direction_, up_));
-}
-
-void FreeRoamCamera::CameraTransform::moveRight(f32 delta_time) noexcept {
-  f32 delta_speed = getDeltaSpeed_(delta_time);
-  position_ += delta_speed * glm::normalize(glm::cross(direction_, up_));
 }
