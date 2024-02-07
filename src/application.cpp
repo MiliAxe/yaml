@@ -10,13 +10,12 @@
 
 void Application::windowSizeCallback_(GLFWwindow *window, int32 width,
                                       int32 height) noexcept {
-  Application *instance =
+  auto *instance =
       reinterpret_cast<Application *>(glfwGetWindowUserPointer(window));
   instance->windowResize_(width, height);
 }
 
-void Application::windowResize_(f32 width, f32 height) noexcept {
-  glViewport(0, 0, width, height);
+void Application::windowResize_(f32 width, f32 height) noexcept { glViewport(0, 0, width, height);
   camera_.setApsectRatio(width / height);
 }
 
@@ -25,7 +24,7 @@ void Application::windowKeyCallback_(GLFWwindow *window, int32 key,
                                      int32 action,
                                      [[maybe_unused]] int32 mods) noexcept {
   if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-    glfwSetWindowShouldClose(window, true);
+    glfwSetWindowShouldClose(window, static_cast<int>(true));
   }
 }
 
@@ -83,11 +82,11 @@ void Application::init_() {
 }
 
 void Application::initGLFW_() {
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, WINDOW_GL_VERSION_MAJOR);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, WINDOW_GL_VERSION_MINOR);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-  if (!glfwInit()) {
+  if (!static_cast<bool>(glfwInit())) {
     ERROR_LOG("Failed to init GLFW.");
     throw RUNTIME_ERROR;
   }
@@ -101,20 +100,20 @@ void Application::initGLFW_() {
   }
 
   glfwMakeContextCurrent(window_);
-  glfwSwapInterval(true);
+  glfwSwapInterval(static_cast<int>(true));
 
   glfwSetWindowSizeCallback(window_, windowSizeCallback_);
   glfwSetKeyCallback(window_, windowKeyCallback_);
 }
 
-void Application::initGLAD_() const {
-  if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+void Application::initGLAD_() {
+  if (!static_cast<bool>(gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))) {
     ERROR_LOG("Failed binding glad.");
     throw RUNTIME_ERROR;
   }
 }
 
-void Application::setGlParams_() const noexcept {
+void Application::setGlParams_() noexcept {
   glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
   glEnable(GL_BLEND);
   glEnable(GL_DEPTH_TEST);
@@ -205,9 +204,10 @@ void Application::run() {
   glm::mat4 model(1.0f);
 
   glClearColor(0, 0, 0, 0);
-  while (!glfwWindowShouldClose(window_)) {
+  while (!static_cast<bool>(glfwWindowShouldClose(window_))) {
     basic_shader.setFloat("time", glfwGetTime());
     updateModelTransform(model);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     update_();
 

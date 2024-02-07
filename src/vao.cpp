@@ -19,6 +19,6 @@ void VAO::linkVBO(const VBO &vbo, uint8 slot, uint8 n_components, GLenum type,
 
   glEnableVertexAttribArray(slot);
 
-  vbo.unbind();
+  VBO::unbind();
   unbind();
 }

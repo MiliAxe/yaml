@@ -16,7 +16,7 @@ public:
 
   static auto fromWindow(GLFWwindow *window) -> Cursor;
 
-  auto operator-(const Cursor &rhs) -> Cursor;
+  auto operator-(const Cursor &rhs) const -> Cursor;
 
   void updatePosition(GLFWwindow *window);
   auto getPitch() -> f32;

@@ -26,7 +26,7 @@ public:
   void activate() const noexcept;
   void deleteProgram() const noexcept;
 
-  void setBool(const char *name, bool value) const noexcept;
+  void setBool(const char *name, int32 value) const noexcept;
   void setInt(const char *name, int32 value) const noexcept;
   void setFloat(const char *name, f32 value) const noexcept;
   void setVec2(const char *name, const glm::vec2 &value) const noexcept;

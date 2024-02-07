@@ -38,6 +38,8 @@ private:
                                   int32 height) noexcept;
   static void windowKeyCallback_(GLFWwindow *window, int32 key, int32 scan_code,
                                  int32 action, int32 mods) noexcept;
+  static void initGLAD_();
+  static void setGlParams_() noexcept;
 
   void windowResize_(f32 width, f32 height) noexcept;
   void processKeyboardInput_() noexcept;
@@ -45,9 +47,7 @@ private:
 
   void init_();
   void initGLFW_();
-  void initGLAD_() const;
 
-  void setGlParams_() const noexcept;
 
   void updateDeltaTime_() noexcept;
   void update_() noexcept;

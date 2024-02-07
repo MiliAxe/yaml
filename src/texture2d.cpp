@@ -3,12 +3,12 @@
 #include <format>
 #include <stb_image.h>
 
-auto Texture2D::getImageBinary(const char *image_path, int32 *width, int32 *height,
-                               int32 *n_channels) -> GLubyte * {
+auto Texture2D::getImageBinary(const char *image_path, int32 *width,
+                               int32 *height, int32 *n_channels) -> GLubyte * {
   GLubyte *data =
       stbi_load(image_path, width, height, n_channels, STBI_rgb_alpha);
 
-  if (!data) {
+  if (!static_cast<bool>(data)) {
     ERROR_LOG(std::format("Could not load image from {}\n Reason: {}",
                           image_path, stbi_failure_reason()));
     throw RUNTIME_ERROR;
@@ -61,7 +61,9 @@ void Texture2D::generateMipmap() noexcept {
 void Texture2D::deleteTexture() const noexcept { glDeleteTextures(1, &id_); }
 
 void Texture2D::loadFromFile(const char *image_path) {
-  int32 width, height, n_channels;
+  int32 width;
+  int32 height;
+  int32 n_channels;
   GLubyte *data = getImageBinary(image_path, &width, &height, &n_channels);
   bind();
   glTexImage2D(kTexture_type, 0, GL_RGBA, width, height, 0, GL_RGBA,
