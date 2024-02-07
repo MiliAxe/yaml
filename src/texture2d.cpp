@@ -1,6 +1,5 @@
 #include "texture2d.hpp"
 #include "globals.hpp"
-
 #include <format>
 #include <stb_image.h>
 

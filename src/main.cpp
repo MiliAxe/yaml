@@ -1,3 +1,8 @@
-#include <iostream>
+#include "application.hpp"
 
-int main() { return EXIT_SUCCESS; }
+int main() {
+  Application app;
+  app.run();
+
+  return EXIT_SUCCESS;
+}

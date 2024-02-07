@@ -50,9 +50,15 @@ _loader_error_log(std::string_view msg, std::string_view file, int32 line) {
 
 #define WINDOW_WIDTH 1280
 #define WINDOW_HEIGHT 720
+#define WINDOW_TITLE "Develop window"
+#define WINDOW_MONITOR nullptr
+#define WINDOW_SHARE nullptr
 
 #define INITIAL_CAM_FOV 66.0f
 #define INITIAL_CAM_SPEED 5.0f
 #define CAM_SENSITIVITY 0.1f
 #define MAX_PITCH_DEGREE 89.999f
 #define MIN_PITCH_DEGREE -89.999f
+#define SPEED_GAIN_COEFFICIENT 3.0f
+#define NEAR_PLANE 0.1f
+#define FAR_PLANE 50.0f
