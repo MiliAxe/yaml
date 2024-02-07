@@ -43,7 +43,9 @@ void BaseShader::checkErrors_(const char *file_path) const {
   if (!success) {
     GLchar info_log[512];
     glGetShaderInfoLog(id_, sizeof(info_log), nullptr, info_log);
-    ERROR_LOG(std::format("failed compiling shader \"{}\".", file_path));
+    ERROR_LOG(std::format("failed compiling shader \"{}\"\n."
+                          "Reason: {}.\n",
+                          file_path, info_log));
 
     throw RUNTIME_ERROR;
   }
