@@ -6,9 +6,9 @@ void ShaderProgram::checkErrors_() const {
   GLint success;
   glGetProgramiv(id_, GL_LINK_STATUS, &success);
 
-  if (!success) {
-    GLchar info_log[512];
-    glGetProgramInfoLog(id_, sizeof(info_log), nullptr, info_log);
+  if (!static_cast<bool>(success)) {
+    GLchar info_log[MAX_SHADER_LOG_BUF_SIZE];
+    glGetProgramInfoLog(id_, MAX_SHADER_LOG_BUF_SIZE, nullptr, info_log);
     ERROR_LOG(std::format("failed linking shader program.\n"
                           "Reason: {}.\n",
                           info_log));
@@ -36,7 +36,7 @@ void ShaderProgram::activate() const noexcept { glUseProgram(id_); }
 
 void ShaderProgram::deleteProgram() const noexcept { glDeleteProgram(id_); }
 
-void ShaderProgram::setBool(const char *name, bool value) const noexcept {
+void ShaderProgram::setBool(const char *name, int32 value) const noexcept {
   glUniform1i(glGetUniformLocation(id_, name), value);
 }
 
@@ -53,8 +53,8 @@ void ShaderProgram::setVec2(const char *name,
   glUniform2fv(glGetUniformLocation(id_, name), 1, glm::value_ptr(value));
 }
 
-void ShaderProgram::setVec2(const char *name, f32 x, f32 y) const noexcept {
-  glUniform2f(glGetUniformLocation(id_, name), x, y);
+void ShaderProgram::setVec2(const char *name, f32 x_component, f32 y_component) const noexcept {
+  glUniform2f(glGetUniformLocation(id_, name), x_component, y_component);
 }
 
 void ShaderProgram::setVec3(const char *name,
@@ -62,9 +62,9 @@ void ShaderProgram::setVec3(const char *name,
   glUniform3fv(glGetUniformLocation(id_, name), 1, glm::value_ptr(value));
 }
 
-void ShaderProgram::setVec3(const char *name, f32 x, f32 y,
-                            f32 z) const noexcept {
-  glUniform3f(glGetUniformLocation(id_, name), x, y, z);
+void ShaderProgram::setVec3(const char *name, f32 x_component, f32 y_component,
+                            f32 z_component) const noexcept {
+  glUniform3f(glGetUniformLocation(id_, name), x_component, y_component, z_component);
 }
 
 void ShaderProgram::setVec4(const char *name,
@@ -72,9 +72,9 @@ void ShaderProgram::setVec4(const char *name,
   glUniform4fv(glGetUniformLocation(id_, name), 1, glm::value_ptr(value));
 }
 
-void ShaderProgram::setVec4(const char *name, f32 x, f32 y, f32 z,
-                            f32 w) const noexcept {
-  glUniform4f(glGetUniformLocation(id_, name), x, y, z, w);
+void ShaderProgram::setVec4(const char *name, f32 x_component, f32 y_component, f32 z_component,
+                            f32 w_component) const noexcept {
+  glUniform4f(glGetUniformLocation(id_, name), x_component, y_component, z_component, w_component);
 }
 
 void ShaderProgram::setMat2(const char *name,

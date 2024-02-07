@@ -40,9 +40,9 @@ void BaseShader::checkErrors_(const char *file_path) const {
   GLint success;
   glGetShaderiv(id_, GL_COMPILE_STATUS, &success);
 
-  if (!success) {
-    GLchar info_log[512];
-    glGetShaderInfoLog(id_, sizeof(info_log), nullptr, info_log);
+  if (!static_cast<bool>(success)) {
+    GLchar info_log[MAX_SHADER_LOG_BUF_SIZE];
+    glGetShaderInfoLog(id_, MAX_SHADER_LOG_BUF_SIZE, nullptr, info_log);
     ERROR_LOG(std::format("failed compiling shader \"{}\"\n."
                           "Reason: {}.\n",
                           file_path, info_log));
