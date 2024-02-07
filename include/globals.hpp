@@ -48,6 +48,11 @@ _loader_error_log(std::string_view msg, std::string_view file, int32 line) {
 
 #define IS_VERBOSE 1
 
+#define MAX_SHADER_LOG_BUF_SIZE 512
+
+#define WINDOW_GL_VERSION_MAJOR 4
+#define WINDOW_GL_VERSION_MINOR 6
+
 #define WINDOW_WIDTH 1280
 #define WINDOW_HEIGHT 720
 #define WINDOW_TITLE "Develop window"
