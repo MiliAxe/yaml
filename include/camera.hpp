@@ -59,5 +59,7 @@ public:
   void update() noexcept;
   void setApsectRatio(f32 aspect_ratio) noexcept;
   void setFirstMove(bool value) noexcept;
-  auto getMatrix() -> glm::mat4;
+
+  [[nodiscard("value not handled.")]] auto getMatrix() const noexcept
+      -> const glm::mat4 &;
 };

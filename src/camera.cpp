@@ -47,6 +47,10 @@ void FreeRoamCamera::setApsectRatio(f32 aspect_ratio) noexcept {
   aspect_ratio_ = aspect_ratio;
 }
 
+auto FreeRoamCamera::getMatrix() const noexcept -> const glm::mat4 & {
+  return matrix_;
+}
+
 void FreeRoamCamera::CameraTransform::setNormalSpeed() noexcept {
   speed_ = INITIAL_CAM_SPEED;
 }
