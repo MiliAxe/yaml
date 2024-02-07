@@ -9,7 +9,9 @@ void ShaderProgram::checkErrors_() const {
   if (!success) {
     GLchar info_log[512];
     glGetProgramInfoLog(id_, sizeof(info_log), nullptr, info_log);
-    ERROR_LOG("failed linking shader program.");
+    ERROR_LOG(std::format("failed linking shader program.\n"
+                          "Reason: {}.\n",
+                          info_log));
 
     throw RUNTIME_ERROR;
   }
