@@ -19,14 +19,14 @@ void FreeRoamCamera::CameraTransform::updateDirection_() noexcept {
   direction_ = glm::normalize(new_direction);
 }
 
-auto FreeRoamCamera::CameraTransform::getView_() -> glm::mat4{
+auto FreeRoamCamera::CameraTransform::getView_() -> glm::mat4 {
   return glm::lookAt(position_, position_ + direction_, up_);
 }
 
 void FreeRoamCamera::CameraTransform::updateYawPitch(const Cursor &offset) {
-  pitch_ += offset.reverse().y * CAM_SENSITIVITY;
+  pitch_ += -offset.y_ * CAM_SENSITIVITY;
   pitch_ = std::clamp(pitch_, MIN_PITCH_DEGREE, MAX_PITCH_DEGREE);
-  yaw_ += offset.x * CAM_SENSITIVITY;
+  yaw_ += offset.x_ * CAM_SENSITIVITY;
 }
 
 void FreeRoamCamera::updateMatrix_() noexcept {
@@ -43,11 +43,7 @@ void FreeRoamCamera::update() noexcept {
   updateMatrix_();
 }
 
-auto FreeRoamCamera::getMatrix() -> glm::mat4 {
-  return matrix_;
-}
-
-void FreeRoamCamera::setApsectRatio(float aspect_ratio) noexcept {
+void FreeRoamCamera::setApsectRatio(f32 aspect_ratio) noexcept {
   aspect_ratio_ = aspect_ratio;
 }
 
@@ -59,26 +55,27 @@ void FreeRoamCamera::CameraTransform::setFastSpeed() noexcept {
   speed_ = INITIAL_CAM_SPEED * SPEED_GAIN_COEFFICIENT;
 }
 
-auto FreeRoamCamera::CameraTransform::getDeltaSpeed_(float delta_time)  const noexcept -> float {
+auto FreeRoamCamera::CameraTransform::getDeltaSpeed_(
+    f32 delta_time) const noexcept -> f32 {
   return delta_time * speed_;
 }
 
-void FreeRoamCamera::CameraTransform::moveForward(float delta_time) noexcept {
-  float delta_speed = getDeltaSpeed_(delta_time);
+void FreeRoamCamera::CameraTransform::moveForward(f32 delta_time) noexcept {
+  f32 delta_speed = getDeltaSpeed_(delta_time);
   position_ += delta_speed * direction_;
 }
 
-void FreeRoamCamera::CameraTransform::moveBackward(float delta_time) noexcept {
-  float delta_speed = getDeltaSpeed_(delta_time);
+void FreeRoamCamera::CameraTransform::moveBackward(f32 delta_time) noexcept {
+  f32 delta_speed = getDeltaSpeed_(delta_time);
   position_ -= delta_speed * direction_;
 }
 
-void FreeRoamCamera::CameraTransform::moveLeft(float delta_time) noexcept {
-  float delta_speed = getDeltaSpeed_(delta_time);
+void FreeRoamCamera::CameraTransform::moveLeft(f32 delta_time) noexcept {
+  f32 delta_speed = getDeltaSpeed_(delta_time);
   position_ -= delta_speed * glm::normalize(glm::cross(direction_, up_));
 }
 
-void FreeRoamCamera::CameraTransform::moveRight(float delta_time) noexcept {
-  float delta_speed = getDeltaSpeed_(delta_time);
+void FreeRoamCamera::CameraTransform::moveRight(f32 delta_time) noexcept {
+  f32 delta_speed = getDeltaSpeed_(delta_time);
   position_ += delta_speed * glm::normalize(glm::cross(direction_, up_));
 }
