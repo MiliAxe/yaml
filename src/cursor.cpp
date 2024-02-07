@@ -16,8 +16,8 @@ auto Cursor::fromWindow(GLFWwindow *window) -> Cursor {
 auto Cursor::operator-(const Cursor &rhs) -> Cursor {
   Cursor new_cursor;
 
-  new_cursor.x_ -= x_ - rhs.x_;
-  new_cursor.y_ -= y_ - rhs.y_;
+  new_cursor.x_ = x_ - rhs.x_;
+  new_cursor.y_ = y_ - rhs.y_;
 
   return new_cursor;
 }
