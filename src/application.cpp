@@ -4,30 +4,29 @@
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 
-
-void Application::windowSizeCallback_(GLFWwindow *window, int width,
-                                      int height) noexcept {
+void Application::windowSizeCallback_(GLFWwindow *window, int32 width,
+                                      int32 height) noexcept {
   Application *instance =
       reinterpret_cast<Application *>(glfwGetWindowUserPointer(window));
   instance->windowResize_(width, height);
 }
 
-void Application::windowResize_(float width, float height) noexcept {
+void Application::windowResize_(f32 width, f32 height) noexcept {
   glViewport(0, 0, width, height);
   camera_.setApsectRatio(width / height);
 }
 
-void Application::windowKeyCallback_(GLFWwindow *window, int key,
-                                     [[maybe_unused]] int scan_code, int action,
-                                     [[maybe_unused]] int mods) noexcept {
+void Application::windowKeyCallback_(GLFWwindow *window, int32 key,
+                                     [[maybe_unused]] int32 scan_code,
+                                     int32 action,
+                                     [[maybe_unused]] int32 mods) noexcept {
   if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
     glfwSetWindowShouldClose(window, true);
   }
 }
 
-
-#define ON_KEY_PRESS(KEY) if(glfwGetKey(window_, KEY) == GLFW_PRESS)
-#define ON_KEY_RELEASE(KEY) if(glfwGetKey(window_, KEY) == GLFW_RELEASE)
+#define ON_KEY_PRESS(KEY) if (glfwGetKey(window_, KEY) == GLFW_PRESS)
+#define ON_KEY_RELEASE(KEY) if (glfwGetKey(window_, KEY) == GLFW_RELEASE)
 
 void Application::processKeyboardInput_() noexcept {
   ON_KEY_PRESS(GLFW_KEY_W) camera_.transform.moveForward(delta_time_);
@@ -40,7 +39,7 @@ void Application::processKeyboardInput_() noexcept {
 
 #define SET_CURSOR_MODE(MODE) glfwSetInputMode(window, GLFW_CURSOR, MODE)
 
-auto Application::Mouse::mousePressReturnOffset(GLFWwindow * window) -> Cursor {
+auto Application::Mouse::mousePressReturnOffset(GLFWwindow *window) -> Cursor {
   SET_CURSOR_MODE(GLFW_CURSOR_DISABLED);
   Cursor cursor = Cursor::fromWindow(window);
   if (first_click_) {
@@ -53,22 +52,30 @@ auto Application::Mouse::mousePressReturnOffset(GLFWwindow * window) -> Cursor {
   return offset;
 }
 
-void Application::Mouse::mouseRelease(GLFWwindow * window) {
+void Application::Mouse::mouseRelease(GLFWwindow *window) {
   SET_CURSOR_MODE(GLFW_CURSOR_NORMAL);
   first_click_ = true;
 }
 
-#define ON_MOUSE_BUTTON_PRESS(BUTTON) if(glfwGetMouseButton(window_, BUTTON) == GLFW_PRESS)
-#define ON_MOUSE_BUTTON_RELEASE(BUTTON) if(glfwGetMouseButton(window_, BUTTON) == GLFW_RELEASE)
+#define ON_MOUSE_BUTTON_PRESS(BUTTON)                                          \
+  if (glfwGetMouseButton(window_, BUTTON) == GLFW_PRESS)
+#define ON_MOUSE_BUTTON_RELEASE(BUTTON)                                        \
+  if (glfwGetMouseButton(window_, BUTTON) == GLFW_RELEASE)
 
 void Application::processMouseInput_() noexcept {
   ON_MOUSE_BUTTON_PRESS(GLFW_MOUSE_BUTTON_LEFT) {
     auto offset = mouse.mousePressReturnOffset(window_);
     camera_.transform.updateYawPitch(offset);
-  } 
+  }
   ON_MOUSE_BUTTON_RELEASE(GLFW_MOUSE_BUTTON_LEFT) {
     mouse.mouseRelease(window_);
   }
+}
+
+void Application::init_() {
+  initGLFW_();
+  initGLAD_();
+  setGlParams_();
 }
 
 void Application::initGLFW_() {
@@ -81,7 +88,7 @@ void Application::initGLFW_() {
     throw RUNTIME_ERROR;
   }
 
-  window_ = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT,WINDOW_TITLE,
+  window_ = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE,
                              WINDOW_MONITOR, WINDOW_SHARE);
   if (window_ == nullptr) {
     ERROR_LOG("GLFW window is null.");
@@ -111,8 +118,8 @@ void Application::setGlParams_() const noexcept {
 }
 
 void Application::updateDeltaTime_() noexcept {
-  float current_time = static_cast<float>(glfwGetTime());
-  static float last_time;
+  f32 current_time = static_cast<f32>(glfwGetTime());
+  static f32 last_time;
   delta_time_ = current_time - last_time;
   last_time = current_time;
 }
@@ -124,16 +131,12 @@ void Application::update_() noexcept {
   camera_.update();
 }
 
-Application::Application() {
+Application::Application() noexcept {
   init_();
   glfwSetWindowUserPointer(window_, reinterpret_cast<void *>(this));
 }
 
-void Application::init_() {
-  initGLFW_();
-  initGLAD_();
-  setGlParams_();
-}
+Application::~Application() noexcept { glfwTerminate(); }
 
 void Application::run() {
   glClearColor(0, 0, 0, 0);
