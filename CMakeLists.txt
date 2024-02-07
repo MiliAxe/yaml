@@ -2,9 +2,9 @@ cmake_minimum_required(VERSION 3.20)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wno-unused-function")
 
-set(ASSETS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/assets")
+# set(ASSETS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/assets")
 
 project(
   yaml
@@ -21,19 +21,19 @@ target_sources(
           src/ebo.cpp
           src/vbo.cpp
           src/vao.cpp
-          src/utl.cpp
           src/shader.cpp
           src/shader_program.cpp
           src/texture2d.cpp
           src/camera.cpp
+          src/cursor.cpp
           src/application.cpp)
 target_include_directories(model_loader
                            PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include/")
 target_link_libraries(model_loader PRIVATE glfw glad stb_image)
 
-add_custom_command(
-  TARGET POST_BUILD
-  model_loader
-  COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different ${ASSETS_DIR}
-          $<TARGET_FILE_DIR:model_loader>/assets
-  COMMENT "Copying assets to build directory")
+# add_custom_command(
+#   TARGET POST_BUILD
+#   model_loader
+#   COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different ${ASSETS_DIR}
+#           $<TARGET_FILE_DIR:model_loader>/assets
+#   COMMENT "Copying assets to build directory")

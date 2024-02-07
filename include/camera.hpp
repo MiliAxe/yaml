@@ -7,6 +7,7 @@
 #pragma once
 
 #include "globals.hpp"
+#include "cursor.hpp"
 
 #include <GLFW/glfw3.h>
 #include <glm/ext.hpp>
@@ -15,55 +16,44 @@
 // TODO: move the cursor to another class.
 // TODO: leave input handeling to Apllication class and delete from here.
 class FreeRoamCamera {
+  class CameraTransform {
+    public:
+      CameraTransform() = default;
+      void updateDirection_() noexcept;
+      void updateYawPitch(const Cursor &offset);
+      auto getView() -> glm::mat4;
+      void moveForward(float delta_time) noexcept;
+      void moveBackward(float delta_time) noexcept;
+      void moveLeft(float delta_time) noexcept;
+      void moveRight(float delta_time) noexcept;
+      void setNormalSpeed() noexcept;
+      void setFastSpeed() noexcept;
 
-  // friend class Application;
+    private:
+      auto getDeltaSpeed(float delta_time)  const noexcept -> float;
+      float pitch_ = 0.0f;
+      float yaw_ = -90.0f;
+      float speed_ = INITIAL_CAM_SPEED;
+      glm::vec3 up_ = glm::vec3(0.0f, 1.0f, 0.0f);
+      glm::vec3 position_ = glm::vec3(0.0f, 0.0f, 3.0f);
+      glm::vec3 direction_ = glm::vec3(0.0f, 0.0f, -1.0f);
+
+      friend class FreeRoamCamera;
+  };
+
 
 private:
   float fov_ = INITIAL_CAM_FOV;
   float aspect_ratio_ = WINDOW_WIDTH / static_cast<float>(WINDOW_HEIGHT);
-  float near_plane_ = 0.1f;
-  float far_plane_ = 50.0f;
-
-  float speed_ = INITIAL_CAM_SPEED;
-
-  bool first_click_move_ = true;
-
-  float last_cursor_x_ = 0.0f;
-  float last_cursor_y_ = 0.0f;
-
-  float pitch_ = 0.0f;
-  float yaw_ = -90.0f;
-
-  glm::vec3 up_ = glm::vec3(0.0f, 1.0f, 0.0f);
-  glm::vec3 position_ = glm::vec3(0.0f, 0.0f, 3.0f);
-  glm::vec3 direction_ = glm::vec3(0.0f, 0.0f, -1.0f);
-
   glm::mat4 matrix_ = glm::mat4(1.0f);
 
-  void updateMatrix_() noexcept;
-  void updateDirVec_() noexcept;
 
 public:
+  CameraTransform transform;
   FreeRoamCamera() noexcept;
 
+  void updateMatrix_() noexcept;
   void update() noexcept;
-  void updateYawAndPitch(double x, double y);
-
   void setApsectRatio(float aspect_ratio) noexcept;
-  void setPosition(const glm::vec3 &position) noexcept;
-  void setSpeed(float speed) noexcept;
   void setFirstMove(bool value) noexcept;
-
-  [[nodiscard("value not handled.")]] auto getMatrix() const noexcept
-      -> const glm::mat4 &;
-  [[nodiscard("value not handled.")]] auto getPosition() const noexcept
-      -> const glm::vec3 &;
-  [[nodiscard("value not handled.")]] auto getSpeed() const noexcept -> const
-      float &;
-  [[nodiscard("value not handled.")]] auto getDirection() const noexcept
-      -> const glm::vec3 &;
-  [[nodiscard("value not handled.")]] auto getUp() const noexcept
-      -> const glm::vec3 &;
-  [[nodiscard("value not handled.")]] auto getFirstMove() const noexcept
-      -> const bool &;
 };

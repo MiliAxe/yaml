@@ -15,6 +15,15 @@ class Application {
 private:
   GLFWwindow *window_;
   FreeRoamCamera camera_;
+  class Mouse {
+  public:
+    auto mousePressReturnOffset(GLFWwindow * window) -> Cursor;
+    void mouseRelease(GLFWwindow * window);
+  private:
+    Cursor last_cursor_;
+    bool first_click_ = true;
+  };
+  Mouse mouse;
 
   float delta_time_;
 
