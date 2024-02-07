@@ -43,6 +43,10 @@ void FreeRoamCamera::update() noexcept {
   updateMatrix_();
 }
 
+auto FreeRoamCamera::getMatrix() -> glm::mat4 {
+  return matrix_;
+}
+
 void FreeRoamCamera::setApsectRatio(float aspect_ratio) noexcept {
   aspect_ratio_ = aspect_ratio;
 }

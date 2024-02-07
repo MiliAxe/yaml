@@ -56,4 +56,5 @@ public:
   void update() noexcept;
   void setApsectRatio(float aspect_ratio) noexcept;
   void setFirstMove(bool value) noexcept;
+  auto getMatrix() -> glm::mat4;
 };
