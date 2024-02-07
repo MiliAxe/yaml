@@ -19,7 +19,7 @@ void FreeRoamCamera::CameraTransform::updateDirection_() noexcept {
   direction_ = glm::normalize(new_direction);
 }
 
-auto FreeRoamCamera::CameraTransform::getView() -> glm::mat4{
+auto FreeRoamCamera::CameraTransform::getView_() -> glm::mat4{
   return glm::lookAt(position_, position_ + direction_, up_);
 }
 
@@ -33,7 +33,7 @@ void FreeRoamCamera::updateMatrix_() noexcept {
   glm::mat4 projection = glm::perspective(glm::radians(fov_), aspect_ratio_,
                                           NEAR_PLANE, FAR_PLANE);
 
-  matrix_ = projection * transform.getView();
+  matrix_ = projection * transform.getView_();
 }
 
 FreeRoamCamera::FreeRoamCamera() noexcept {}
@@ -55,26 +55,26 @@ void FreeRoamCamera::CameraTransform::setFastSpeed() noexcept {
   speed_ = INITIAL_CAM_SPEED * SPEED_GAIN_COEFFICIENT;
 }
 
-auto FreeRoamCamera::CameraTransform::getDeltaSpeed(float delta_time)  const noexcept -> float {
+auto FreeRoamCamera::CameraTransform::getDeltaSpeed_(float delta_time)  const noexcept -> float {
   return delta_time * speed_;
 }
 
 void FreeRoamCamera::CameraTransform::moveForward(float delta_time) noexcept {
-  float delta_speed = getDeltaSpeed(delta_time);
+  float delta_speed = getDeltaSpeed_(delta_time);
   position_ += delta_speed * direction_;
 }
 
 void FreeRoamCamera::CameraTransform::moveBackward(float delta_time) noexcept {
-  float delta_speed = getDeltaSpeed(delta_time);
+  float delta_speed = getDeltaSpeed_(delta_time);
   position_ -= delta_speed * direction_;
 }
 
 void FreeRoamCamera::CameraTransform::moveLeft(float delta_time) noexcept {
-  float delta_speed = getDeltaSpeed(delta_time);
+  float delta_speed = getDeltaSpeed_(delta_time);
   position_ -= delta_speed * glm::normalize(glm::cross(direction_, up_));
 }
 
 void FreeRoamCamera::CameraTransform::moveRight(float delta_time) noexcept {
-  float delta_speed = getDeltaSpeed(delta_time);
+  float delta_speed = getDeltaSpeed_(delta_time);
   position_ += delta_speed * glm::normalize(glm::cross(direction_, up_));
 }

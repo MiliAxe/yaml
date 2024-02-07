@@ -19,9 +19,7 @@ class FreeRoamCamera {
   class CameraTransform {
     public:
       CameraTransform() = default;
-      void updateDirection_() noexcept;
       void updateYawPitch(const Cursor &offset);
-      auto getView() -> glm::mat4;
       void moveForward(float delta_time) noexcept;
       void moveBackward(float delta_time) noexcept;
       void moveLeft(float delta_time) noexcept;
@@ -30,7 +28,9 @@ class FreeRoamCamera {
       void setFastSpeed() noexcept;
 
     private:
-      auto getDeltaSpeed(float delta_time)  const noexcept -> float;
+      auto getView_() -> glm::mat4;
+      void updateDirection_() noexcept;
+      auto getDeltaSpeed_(float delta_time)  const noexcept -> float;
       float pitch_ = 0.0f;
       float yaw_ = -90.0f;
       float speed_ = INITIAL_CAM_SPEED;
@@ -46,13 +46,13 @@ private:
   float fov_ = INITIAL_CAM_FOV;
   float aspect_ratio_ = WINDOW_WIDTH / static_cast<float>(WINDOW_HEIGHT);
   glm::mat4 matrix_ = glm::mat4(1.0f);
+  void updateMatrix_() noexcept;
 
 
 public:
   CameraTransform transform;
   FreeRoamCamera() noexcept;
 
-  void updateMatrix_() noexcept;
   void update() noexcept;
   void setApsectRatio(float aspect_ratio) noexcept;
   void setFirstMove(bool value) noexcept;
