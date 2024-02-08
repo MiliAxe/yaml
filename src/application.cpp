@@ -192,8 +192,8 @@ void Application::run() {
   initializeCubeBuffers(vao, vbo, cube);
 
   Texture2D text0, text1;
-  initializeCubeTextures(text0, text1);
-  bindTexturesToShader(basic_shader, text0, text1);
+  // initializeCubeTextures(text0, text1);
+  // bindTexturesToShader(basic_shader, text0, text1);
 
   glm::mat4 model(1.0f);
 

@@ -25,6 +25,8 @@ protected:
   void updateMatrix_() noexcept;
 
 public:
+  virtual ~BaseCamera() = default;
+
   void setApsectRatio(f32 aspect_ratio) noexcept;
   [[nodiscard("value not handled.")]] auto getMatrix() const noexcept
       -> const glm::mat4 &;
@@ -36,11 +38,10 @@ public:
 
 class OrbitalCamera : public BaseCamera {
 private:
-  f32 z_axis_degree_ = 0.0f;
+  f32 y_axis_degree_ = 0.0f;
   f32 x_axis_degree_ = 0.0f;
   f32 radius_ = 5.0f;
   glm::vec3 current_position_ = glm::vec3(0.0f, 0.0f, 0.0f);
-  
 
   virtual auto getView_() -> glm::mat4 override;
   void processMouseInput_(const Cursor &offset_cursor) noexcept;
@@ -49,10 +50,10 @@ private:
 
 public:
   OrbitalCamera() noexcept;
+
   virtual void processInput(GLFWwindow *window, const Cursor &cursor_offset,
                             f32 delta_time) noexcept override;
   virtual void update() override;
-
 };
 
 class FreeRoamCamera : public BaseCamera {

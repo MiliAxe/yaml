@@ -7,7 +7,6 @@
 #include <glm/ext/quaternion_geometric.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
-#include <iostream>
 
 void FreeRoamCamera::updateDirection_() noexcept {
   glm::vec3 new_direction;
@@ -109,7 +108,7 @@ auto BaseCamera::getMatrix() const noexcept -> const glm::mat4 & {
   return matrix_;
 }
 
-OrbitalCamera::OrbitalCamera() noexcept {}
+OrbitalCamera::OrbitalCamera() noexcept { position_ = {0.0f, 0.0f, radius_}; }
 
 auto OrbitalCamera::getView_() -> glm::mat4 {
   glm::vec3 target(0.0f, 0.0f, 0.0f);
@@ -117,26 +116,23 @@ auto OrbitalCamera::getView_() -> glm::mat4 {
 }
 
 void OrbitalCamera::processMouseInput_(const Cursor &offset_cursor) noexcept {
-  z_axis_degree_ += -offset_cursor.y_;
-  z_axis_degree_ = std::clamp(z_axis_degree_, -89.0f, 89.0f);
-  x_axis_degree_ += offset_cursor.x_;
+  y_axis_degree_ += offset_cursor.y_;
+  y_axis_degree_ = std::clamp(y_axis_degree_, -89.0f, 89.0f);
+  x_axis_degree_ -= offset_cursor.x_;
 }
 
-void OrbitalCamera::setRadius_(f32 new_radius) {
-  radius_ = new_radius;
-  position_ = calculateCurrentPosition_();
-}
+void OrbitalCamera::setRadius_(f32 new_radius) { radius_ = new_radius; }
 
 auto OrbitalCamera::calculateCurrentPosition_() -> glm::vec3 {
   glm::vec3 new_position;
 
-  new_position.y = glm::sin(glm::radians(z_axis_degree_)) * radius_;
-  
+  new_position.y = glm::sin(glm::radians(y_axis_degree_)) * radius_;
+
   new_position.x = glm::sin(glm::radians(x_axis_degree_)) *
-                   glm::cos(glm::radians(z_axis_degree_)) * radius_;
+                   glm::cos(glm::radians(y_axis_degree_)) * radius_;
 
   new_position.z = glm::cos(glm::radians(x_axis_degree_)) *
-                   glm::cos(glm::radians(z_axis_degree_)) * radius_;
+                   glm::cos(glm::radians(y_axis_degree_)) * radius_;
 
   return new_position;
 }
