@@ -106,3 +106,40 @@ void FreeRoamCamera::processInput(GLFWwindow *window,
 auto BaseCamera::getMatrix() const noexcept -> const glm::mat4 & {
   return matrix_;
 }
+
+OrbitalCamera::OrbitalCamera() noexcept {}
+
+auto OrbitalCamera::getView_() -> glm::mat4 {
+  glm::vec3 target(0.0f, 0.0f, 0.0f);
+  return glm::lookAt(position_, target, up_);
+}
+
+void OrbitalCamera::processMouseInput_(const Cursor &offset_cursor) noexcept {
+  z_axis_degree_ += -offset_cursor.y_;
+  x_axis_degree_ += -offset_cursor.y_;
+}
+
+void OrbitalCamera::setRadius_(f32 new_radius) {
+  radius_ = new_radius;
+  calculateCurrentPosition_();
+}
+
+auto OrbitalCamera::calculateCurrentPosition_() -> glm::vec3 {
+  glm::vec3 new_position;
+
+  new_position.z = glm::sin(glm::radians(z_axis_degree_));
+  new_position.x = glm::cos(glm::radians(x_axis_degree_)) *
+                   glm::sin(glm::radians(z_axis_degree_));
+  new_position.y = glm::sin(glm::radians(x_axis_degree_)) *
+                   glm::sin(glm::radians(z_axis_degree_));
+
+  return new_position;
+}
+
+void OrbitalCamera::processInput([[maybe_unused]] GLFWwindow *window,
+                                 const Cursor &cursor_offset,
+                                 [[maybe_unused]] f32 delta_time) noexcept {
+  processMouseInput_(cursor_offset);
+}
+
+void OrbitalCamera::update() { updateMatrix_(); }

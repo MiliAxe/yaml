@@ -31,9 +31,6 @@ private:
   Mouse mouse;
   f32 delta_time_;
 
-  // TODO: model
-  // TODO: std::vector of shaders
-
   static void windowSizeCallback_(GLFWwindow *window, int32 width,
                                   int32 height) noexcept;
   static void windowKeyCallback_(GLFWwindow *window, int32 key, int32 scan_code,
@@ -42,8 +39,7 @@ private:
   static void setGlParams_() noexcept;
 
   void windowResize_(f32 width, f32 height) noexcept;
-  // void processKeyboardInput_() noexcept;
-  // void processMouseInput_() noexcept;
+  void processInput_() noexcept;
 
   void init_();
   void initGLFW_();

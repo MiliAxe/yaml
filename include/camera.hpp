@@ -34,6 +34,27 @@ public:
                             f32 delta_time) = 0;
 };
 
+class OrbitalCamera : public BaseCamera {
+private:
+  f32 z_axis_degree_ = 0.0f;
+  f32 x_axis_degree_ = 0.0f;
+  f32 radius_ = 5.0f;
+  glm::vec3 current_position_ = glm::vec3(0.0f, 0.0f, 0.0f);
+  
+
+  virtual auto getView_() -> glm::mat4 override;
+  void processMouseInput_(const Cursor &offset_cursor) noexcept;
+  void setRadius_(f32 new_radius);
+  auto calculateCurrentPosition_() -> glm::vec3;
+
+public:
+  OrbitalCamera() noexcept;
+  virtual void processInput(GLFWwindow *window, const Cursor &cursor_offset,
+                            f32 delta_time) noexcept override;
+  virtual void update() override;
+
+};
+
 class FreeRoamCamera : public BaseCamera {
 private:
   float pitch_ = 0.0f;

@@ -4,14 +4,9 @@
 
 class Cursor {
 
-  friend class FreeRoamCamera;
-  friend class CameraTransform;
-
-private:
+public:
   f32 x_;
   f32 y_;
-
-public:
   Cursor() = default;
 
   static auto fromWindow(GLFWwindow *window) -> Cursor;
