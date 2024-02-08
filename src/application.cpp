@@ -16,7 +16,8 @@ void Application::windowSizeCallback_(GLFWwindow *window, int32 width,
 }
 
 void Application::windowResize_(f32 width, f32 height) noexcept { glViewport(0, 0, width, height);
-  camera_.setApsectRatio(width / height);
+  free_cam_.setApsectRatio(width / height);
+  orbit_cam_.setApsectRatio(width / height);
 }
 
 void Application::windowKeyCallback_(GLFWwindow *window, int32 key,
@@ -54,9 +55,15 @@ void Application::Mouse::mouseRelease(GLFWwindow *window) {
   if (glfwGetMouseButton(window_, BUTTON) == GLFW_RELEASE)
 
 void Application::processInput_() noexcept {
+  if (glfwGetKey(window_, GLFW_KEY_O) == GLFW_PRESS) {
+    currentCamera_ = &orbit_cam_;
+  }
+  if (glfwGetKey(window_, GLFW_KEY_F) == GLFW_PRESS) {
+    currentCamera_ = &free_cam_;
+  }
   ON_MOUSE_BUTTON_PRESS(GLFW_MOUSE_BUTTON_LEFT) {
     Cursor offset = mouse.mousePressReturnOffset(window_);
-    camera_.processInput(window_, offset, delta_time_);
+    currentCamera_->processInput(window_, offset, delta_time_);
   }
   ON_MOUSE_BUTTON_RELEASE(GLFW_MOUSE_BUTTON_LEFT) {
     mouse.mouseRelease(window_);
@@ -117,7 +124,8 @@ void Application::updateDeltaTime_() noexcept {
 
 void Application::update_() noexcept {
   updateDeltaTime_();
-  camera_.update();
+  processInput_();
+  currentCamera_->update();
 }
 
 Application::Application() noexcept {
@@ -192,12 +200,12 @@ void Application::run() {
   glClearColor(0, 0, 0, 0);
   while (!static_cast<bool>(glfwWindowShouldClose(window_))) {
     basic_shader.setFloat("time", glfwGetTime());
-    updateModelTransform(model);
+    // updateModelTransform(model);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     update_();
 
-    updateShaderTransforms(basic_shader, model, camera_.getMatrix());
+    updateShaderTransforms(basic_shader, model, currentCamera_->getMatrix());
 
     render(basic_shader, vao);
   }

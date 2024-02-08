@@ -27,7 +27,9 @@ class Application {
 
 private:
   GLFWwindow *window_;
-  FreeRoamCamera camera_;
+  OrbitalCamera orbit_cam_;
+  FreeRoamCamera free_cam_;
+  BaseCamera *currentCamera_ = &orbit_cam_;
   Mouse mouse;
   f32 delta_time_;
 
