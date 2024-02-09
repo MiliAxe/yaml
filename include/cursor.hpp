@@ -1,3 +1,5 @@
+#pragma once
+
 #include "globals.hpp"
 
 #include <GLFW/glfw3.h>
