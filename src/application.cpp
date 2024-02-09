@@ -1,8 +1,10 @@
 #include "application.hpp"
+#include "event_handler.hpp"
 #include "globals.hpp"
 
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
+#include <iostream>
 
 void Application::windowSizeCallback_(GLFWwindow *window, int32 width,
                                       int32 height) noexcept {
@@ -115,11 +117,13 @@ void Application::updateDeltaTime_() noexcept {
 void Application::update_() noexcept {
   updateDeltaTime_();
   camera_.update();
+  event_handler_.processInput(delta_time_, mouse.mousePressReturnOffset(window_));
 }
 
 Application::Application() noexcept {
   init_();
   glfwSetWindowUserPointer(window_, reinterpret_cast<void *>(this));
+  event_handler_ = EventHandler(window_);
 }
 
 Application::~Application() noexcept { glfwTerminate(); }

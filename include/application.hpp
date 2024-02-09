@@ -8,6 +8,7 @@
 #pragma once
 
 #include "camera.hpp"
+#include "event_handler.hpp"
 
 #include <GLFW/glfw3.h>
 
@@ -30,6 +31,7 @@ private:
   FreeRoamCamera camera_;
   Mouse mouse;
   f32 delta_time_;
+  EventHandler event_handler_;
 
   static void windowSizeCallback_(GLFWwindow *window, int32 width,
                                   int32 height) noexcept;
