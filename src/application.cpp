@@ -8,6 +8,11 @@
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 
+#include <backends/imgui_impl_glfw.h>
+#include <backends/imgui_impl_opengl3.h>
+#include <imgui.h>
+#include <iostream>
+
 void Application::windowSizeCallback_(GLFWwindow *window, int32 width,
                                       int32 height) noexcept {
   auto *instance =
@@ -15,7 +20,8 @@ void Application::windowSizeCallback_(GLFWwindow *window, int32 width,
   instance->windowResize_(width, height);
 }
 
-void Application::windowResize_(f32 width, f32 height) noexcept { glViewport(0, 0, width, height);
+void Application::windowResize_(f32 width, f32 height) noexcept {
+  glViewport(0, 0, width, height);
   free_cam_.setApsectRatio(width / height);
   orbit_cam_.setApsectRatio(width / height);
 }
@@ -55,6 +61,11 @@ void Application::Mouse::mouseRelease(GLFWwindow *window) {
   if (glfwGetMouseButton(window_, BUTTON) == GLFW_RELEASE)
 
 void Application::processInput_() noexcept {
+  // ImGuiIO &io = ImGui::GetIO();
+
+  if (ImGui::GetIO().WantCaptureMouse) {
+    return;
+  }
   if (glfwGetKey(window_, GLFW_KEY_O) == GLFW_PRESS) {
     currentCamera_ = &orbit_cam_;
   }
@@ -179,8 +190,6 @@ void Application::run() {
     shader.activate();
     vao.bind();
     glDrawArrays(GL_TRIANGLES, 0, 36);
-    glfwSwapBuffers(window_);
-    glfwPollEvents();
   };
 
   ShaderProgram basic_shader("assets/shaders/vert.glsl",
@@ -197,16 +206,44 @@ void Application::run() {
 
   glm::mat4 model(1.0f);
 
+  IMGUI_CHECKVERSION();
+  ImGui::CreateContext();
+  ImGuiIO &io = ImGui::GetIO();
+  io.ConfigFlags |=
+      ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
+  io.ConfigFlags |=
+      ImGuiConfigFlags_NavEnableGamepad; // Enable Gamepad Controls
+
+  // Setup Platform/Renderer backends
+  ImGui_ImplGlfw_InitForOpenGL(
+      window_, true); // Second param install_callback=true will install
+                      // GLFW callbacks and chain to existing ones.
+  ImGui_ImplOpenGL3_Init();
+
   glClearColor(0, 0, 0, 0);
   while (!static_cast<bool>(glfwWindowShouldClose(window_))) {
     basic_shader.setFloat("time", glfwGetTime());
     // updateModelTransform(model);
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     update_();
-
     updateShaderTransforms(basic_shader, model, currentCamera_->getMatrix());
-
     render(basic_shader, vao);
+
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+    ImGui::ShowDemoWindow(); // Show demo window! :)
+
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+    glfwSwapBuffers(window_);
+    glfwPollEvents();
   }
+
+  ImGui_ImplOpenGL3_Shutdown();
+  ImGui_ImplGlfw_Shutdown();
+  ImGui::DestroyContext();
 }

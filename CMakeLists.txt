@@ -28,4 +28,4 @@ target_sources(
           src/application.cpp)
 target_include_directories(model_loader
                            PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include/")
-target_link_libraries(model_loader PRIVATE glfw glad stb_image)
+target_link_libraries(model_loader PRIVATE glfw glad stb_image imgui)
