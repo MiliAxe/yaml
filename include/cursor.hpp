@@ -5,9 +5,10 @@
 class Cursor {
 
 public:
-  f32 x_;
-  f32 y_;
+  f32 x;
+  f32 y;
   Cursor() = default;
+  Cursor(f32 x, f32 y);
 
   static auto fromWindow(GLFWwindow *window) -> Cursor;
 

@@ -1,5 +1,7 @@
 #include "cursor.hpp"
 
+Cursor::Cursor(f32 x, f32 y) : x(x), y(y) {}
+
 void Cursor::updatePosition(GLFWwindow *window) { *this = fromWindow(window); }
 
 auto Cursor::fromWindow(GLFWwindow *window) -> Cursor {
@@ -8,8 +10,8 @@ auto Cursor::fromWindow(GLFWwindow *window) -> Cursor {
   glfwGetCursorPos(window, &x_pos, &y_pos);
 
   Cursor cursor;
-  cursor.x_ = static_cast<f32>(x_pos);
-  cursor.y_ = static_cast<f32>(y_pos);
+  cursor.x = static_cast<f32>(x_pos);
+  cursor.y = static_cast<f32>(y_pos);
 
   return cursor;
 }
@@ -17,8 +19,8 @@ auto Cursor::fromWindow(GLFWwindow *window) -> Cursor {
 auto Cursor::operator-(const Cursor &rhs) const -> Cursor {
   Cursor new_cursor;
 
-  new_cursor.x_ = x_ - rhs.x_;
-  new_cursor.y_ = y_ - rhs.y_;
+  new_cursor.x = x - rhs.x;
+  new_cursor.y = y - rhs.y;
 
   return new_cursor;
 }

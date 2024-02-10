@@ -11,7 +11,6 @@
 #include <backends/imgui_impl_glfw.h>
 #include <backends/imgui_impl_opengl3.h>
 #include <imgui.h>
-#include <iostream>
 
 void Application::windowSizeCallback_(GLFWwindow *window, int32 width,
                                       int32 height) noexcept {
@@ -30,39 +29,53 @@ void Application::windowKeyCallback_(GLFWwindow *window, int32 key,
                                      [[maybe_unused]] int32 scan_code,
                                      int32 action,
                                      [[maybe_unused]] int32 mods) noexcept {
-  if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-    glfwSetWindowShouldClose(window, static_cast<int>(true));
-  }
+  auto *instance =
+      reinterpret_cast<Application *>(glfwGetWindowUserPointer(window));
+  instance->keyCallbacks(key, action);
 }
 
-#define SET_CURSOR_MODE(MODE) glfwSetInputMode(window, GLFW_CURSOR, MODE)
+#define ON_KEY_PRESS(KEY) if (key == KEY && action == GLFW_PRESS)
+#define ON_KEY_RELEASE(KEY) if (key == KEY && action == GLFW_RELEASE)
 
-auto Application::Mouse::mousePressReturnOffset(GLFWwindow *window) -> Cursor {
-  SET_CURSOR_MODE(GLFW_CURSOR_DISABLED);
-  Cursor cursor = Cursor::fromWindow(window);
-  if (first_click_) {
-    last_cursor_ = cursor;
-    first_click_ = false;
+void Application::keyCallbacks(int32 key, int32 action) noexcept {
+  ON_KEY_PRESS(GLFW_KEY_ESCAPE) { glfwSetWindowShouldClose(window_, true); }
+
+  ON_KEY_PRESS(GLFW_KEY_W) {
+    currentCamera_->input_handler_.keyState(GLFW_KEY_W, true);
   }
-  Cursor offset = cursor - last_cursor_;
+  ON_KEY_RELEASE(GLFW_KEY_W) {
+    currentCamera_->input_handler_.keyState(GLFW_KEY_W, false);
+  }
 
-  last_cursor_ = cursor;
-  return offset;
-}
+  ON_KEY_PRESS(GLFW_KEY_A) {
+    currentCamera_->input_handler_.keyState(GLFW_KEY_A, true);
+  }
+  ON_KEY_RELEASE(GLFW_KEY_A) {
+    currentCamera_->input_handler_.keyState(GLFW_KEY_A, false);
+  }
 
-void Application::Mouse::mouseRelease(GLFWwindow *window) {
-  SET_CURSOR_MODE(GLFW_CURSOR_NORMAL);
-  first_click_ = true;
+  ON_KEY_PRESS(GLFW_KEY_S) {
+    currentCamera_->input_handler_.keyState(GLFW_KEY_S, true);
+  }
+  ON_KEY_RELEASE(GLFW_KEY_S) {
+    currentCamera_->input_handler_.keyState(GLFW_KEY_S, false);
+  }
+
+  ON_KEY_PRESS(GLFW_KEY_D) {
+    currentCamera_->input_handler_.keyState(GLFW_KEY_D, true);
+  }
+  ON_KEY_RELEASE(GLFW_KEY_D) {
+    currentCamera_->input_handler_.keyState(GLFW_KEY_D, false);
+  }
 }
 
 #define ON_MOUSE_BUTTON_PRESS(BUTTON)                                          \
   if (glfwGetMouseButton(window_, BUTTON) == GLFW_PRESS)
 #define ON_MOUSE_BUTTON_RELEASE(BUTTON)                                        \
   if (glfwGetMouseButton(window_, BUTTON) == GLFW_RELEASE)
+#define SET_CURSOR_MODE(MODE) glfwSetInputMode(window_, GLFW_CURSOR, MODE)
 
 void Application::processInput_() noexcept {
-  // ImGuiIO &io = ImGui::GetIO();
-
   if (ImGui::GetIO().WantCaptureMouse) {
     return;
   }
@@ -73,11 +86,13 @@ void Application::processInput_() noexcept {
     currentCamera_ = &free_cam_;
   }
   ON_MOUSE_BUTTON_PRESS(GLFW_MOUSE_BUTTON_LEFT) {
-    Cursor offset = mouse.mousePressReturnOffset(window_);
-    currentCamera_->processInput(window_, offset, delta_time_);
+    SET_CURSOR_MODE(GLFW_CURSOR_DISABLED);
+    auto &io = ImGui::GetIO();
+    Cursor offset = {io.MouseDelta.x, io.MouseDelta.y};
+    currentCamera_->input_handler_.handle_callback(offset, delta_time_);
   }
   ON_MOUSE_BUTTON_RELEASE(GLFW_MOUSE_BUTTON_LEFT) {
-    mouse.mouseRelease(window_);
+    SET_CURSOR_MODE(GLFW_CURSOR_NORMAL);
   }
 }
 

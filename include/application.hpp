@@ -13,24 +13,11 @@
 
 class Application {
 
-  class Mouse {
-  public:
-    Mouse() = default;
-
-    auto mousePressReturnOffset(GLFWwindow *window) -> Cursor;
-    void mouseRelease(GLFWwindow *window);
-
-  private:
-    Cursor last_cursor_;
-    bool first_click_ = true;
-  };
-
 private:
   GLFWwindow *window_;
   OrbitalCamera orbit_cam_;
   FreeRoamCamera free_cam_;
   BaseCamera *currentCamera_ = &orbit_cam_;
-  Mouse mouse;
   f32 delta_time_;
 
   static void windowSizeCallback_(GLFWwindow *window, int32 width,
@@ -41,11 +28,11 @@ private:
   static void setGlParams_() noexcept;
 
   void windowResize_(f32 width, f32 height) noexcept;
+  void keyCallbacks(int32 key, int32 action) noexcept;
   void processInput_() noexcept;
 
   void init_();
   void initGLFW_();
-
 
   void updateDeltaTime_() noexcept;
   void update_() noexcept;

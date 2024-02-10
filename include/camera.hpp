@@ -8,6 +8,7 @@
 
 #include "cursor.hpp"
 #include "globals.hpp"
+#include "input_handler.hpp"
 
 #include <GLFW/glfw3.h>
 #include <glm/ext.hpp>
@@ -25,6 +26,8 @@ protected:
   void updateMatrix_() noexcept;
 
 public:
+  InputHandler<void(const Cursor &, f32)> input_handler_;
+
   virtual ~BaseCamera() = default;
 
   void setApsectRatio(f32 aspect_ratio) noexcept;
@@ -32,8 +35,6 @@ public:
       -> const glm::mat4 &;
 
   virtual void update() = 0;
-  virtual void processInput(GLFWwindow *window, const Cursor &cursor_offset,
-                            f32 delta_time) = 0;
 };
 
 class OrbitalCamera : public BaseCamera {
@@ -46,13 +47,11 @@ private:
   virtual auto getView_() -> glm::mat4 override;
   void processMouseInput_(const Cursor &offset_cursor) noexcept;
   void setRadius_(f32 new_radius);
-  auto calculateCurrentPosition_() -> glm::vec3;
+  void updateCurrentPosition_();
 
 public:
   OrbitalCamera() noexcept;
 
-  virtual void processInput(GLFWwindow *window, const Cursor &cursor_offset,
-                            f32 delta_time) noexcept override;
   virtual void update() override;
 };
 
@@ -66,7 +65,7 @@ private:
 
   virtual auto getView_() -> glm::mat4 override;
 
-  void processKeyboardInput_(GLFWwindow *window, f32 delta_time) noexcept;
+  void processKeyboardInput_(f32 delta_time) noexcept;
   void processMouseInput_(const Cursor &offset_cursor) noexcept;
   void updateDirection_() noexcept;
   auto getDeltaSpeed_(f32 delta_time) const noexcept -> f32;
@@ -77,8 +76,6 @@ public:
   FreeRoamCamera() noexcept;
 
   virtual void update() noexcept override;
-  virtual void processInput(GLFWwindow *window, const Cursor &cursor_offset,
-                            f32 delta_time) noexcept override;
   void updateYawPitch(const Cursor &offset);
 
   void moveForward(f32 delta_time) noexcept;
